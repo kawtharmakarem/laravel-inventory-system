@@ -1,0 +1,57 @@
+.width30{
+    width:30%;
+}
+.float_right{
+    float:  right !important;
+}
+.custom_img{
+    width:150px;
+    height: 150px;
+}
+.card_title_center{
+    width: 100%;
+    text-align: center !important;
+}
+.form-control:focus {
+    border-color: #f9d618;
+    box-shadow: 0 0 0 0.2rem rgba(249,214,24,0.25) !important;
+}
+.select2-selection:focus {
+    border-color: #f9d618 !important;
+    box-shadow: 0 0 0 0.2rem rgba(241, 206, 7, 0.25) !important;
+}
+.custom_thead{
+    background-color: #121E36;
+    color: #fff;
+}
+.pagination a{
+    background-color: #fff;
+    color: #121E36 !important;
+    }
+.pagination a:active{
+    background-color: #121E36 !important;
+    color: #fff !important;
+}
+.custom_form{
+    border: 1px;
+    border-radius: 7px;
+    padding: 10px;
+    background-color: #d5c998;
+    margin-bottom: 7px;
+}
+.select2-container .select2-selection--single .select2-selection__rendered {
+    background: white;
+    border-radius: 0.25rem;
+}
+.select2-container--focus{
+    border-color: #f9d618 !important;
+    box-shadow: 0 0 0 0.2rem rgba(241, 206, 7, 0.25) !important; 
+}
+/*#121E36 blue yellow
+#736620 dark yellow
+##2B2C26 dark1
+#0E122F dark logo
+#F9D618 yellow
+
+*/
+/* .select2.select2-container select2-container--bootstrap4 select2-container--below .select2-container--open */
