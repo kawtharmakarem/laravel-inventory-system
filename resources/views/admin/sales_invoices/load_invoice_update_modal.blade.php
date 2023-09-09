@@ -161,7 +161,7 @@
         <div class="col-md-2">
             <div class="form-group">
                 <button style="margin-top: 35px;" class="btn btn-sm btn-warning" id="AddItemToIvoiceDetailsActive">
-                Add item</button>
+                Add item activily</button>
             </div>
         </div>
     </div>
@@ -169,7 +169,7 @@
         <div class="clearfix"></div>
         <hr style="border: 1px solid #121E36;">
 
-        <div class="row" id="invoiceitemsDiv">
+        <div class="row" id="activeItemisInInvoiceDiv">
             <h3 class="card-title card_title_center">
                 Items Added To The Invoice
             </h3>
@@ -182,9 +182,35 @@
                     <th>Unit price</th>
                     <th>Quantity</th>
                     <th>Total</th>
-                    <th></th>
+                    <th>Actions</th>
                 </thead>
                 <tbody id="itemsrowtableContainerBody">
+                    @if (!@empty($sales_invoice_details))
+                     
+                    @foreach ($sales_invoice_details as $info)
+                    
+                    <tr>
+                        <td>
+                            {{$info->store_name}}
+                            <input type="hidden" name="item_total_array[]" class="item_total_array" value="{{$info->total_price}}">
+                        </td>
+                        <td>
+                            @if($info->sales_item_type==1) PopularPrice @elseif($info->sales_item_type==2) HalfWholesalePrice  @elseif($info->sales_item_type==3) WholesalePrice @else Undefined @endif
+                        </td>
+                        <td>{{$info->item_name}}</td>
+                        <td>{{$info->uom_name}}</td>
+                        <td>{{$info->unit_price*1}}</td>
+                        <td>{{$info->quantity*1}}</td>
+                        <td>{{$info->total_price*1}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger remove_active_row_item">Delete</button>
+                        </td>
+                        
+                    </tr>
+                    
+                    @endforeach
+     
+                    @endif
 
                 </tbody>
             </table>
@@ -192,6 +218,137 @@
 
         <div class="clearfix"></div>
         <hr style="border: 1px solid #121E36;">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                      <label>Total items</label>
+                      <input readonly oninput="this.value=this.value.replace(/[^0-9.]/g,'');" name="total_cost_items"  id="total_cost_items" 
+                      class="form-control"  value="{{ $invoice_data['total_cost_items']*1 }}"  >
+                 </div>
+                </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                     <label>Tax percent</label>
+                     <input  oninput="this.value=this.value.replace(/[^0-9.]/g,'');" name="tax_percent"  id="tax_percent" 
+                     class="form-control"  value="{{ $invoice_data['tax_percent']*1 }}"  >
+                </div>
+               </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Tax value</label>
+                    <input readonly  name="tax_value" id="tax_value" value="{{$invoice_data['tax_value']*1}}" class="form-control">
+
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Total before discount</label>
+                    <input readonly oninput="this.value=this.value.replace(/[^0-9.]/g,'');" name="total_before_discount" id="total_before_discount" value="{{$invoice_data['total_before_discount']*1}}" class="form-control">
+
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Discount type</label>
+                    <select name="discount_type" id="discount_type" class="form-control">
+                        <option value="">no discount</option>
+                        <option @if($invoice_data['discount_type']==1) selected @endif value="1">Percent</option>
+                        <option @if($invoice_data['discount_type']==2) selected @endif value="2">Value</option>
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Discount percentage</label>
+                    <input readonly oninput="this.value=this.value.replace(/[^0-9.]/g,'');" name="discount_percent" id="discount_percent" value="{{$invoice_data['discount_percent']*1}}" class="form-control">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Discount value</label>
+                    <input readonly  name="discount_value" id="discount_value" value="{{$invoice_data['discount_value']*1}}" class="form-control">
+                </div>
+            </div> 
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Final Total</label>
+                    <input readonly  name="total_cost" id="total_cost" value="{{$invoice_data['total_cost']*1}}" class="form-control">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="shiftDiv">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Collect treasury</label>
+                    <select name="treasuries_id" id="treasuries_id" class="form-control">
+                    @if (!@empty($user_shift))
+                    <option selected value="{{$user_shift['treasuries_id']}}">{{$user_shift['name']}}</option>
+                     @else
+                     <option value="">Sorry ! you haven't treasury now !!</option>   
+                    @endif
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Balance in treasury</label>
+                    <input readonly name="treasuries_balance" id="treasuries_balance" class="form-control"
+                    @if (!@empty($user_shift))
+                    value="{{$user_shift['balance']*1}}"
+                    @else 
+                    value="0" 
+                    @endif
+                    >
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Bill type</label>
+                    <select name="bill_type" class="form-control" id="bill_type">
+                        <option @if($invoice_data['bill_type']) selected  @endif value="1">Cash</option>
+                        <option @if($invoice_data['bill_type']) selected @endif value="2">Deferred</option>
+                    </select>
+                </div>
+            </div>
+          
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">What paid</label>
+                    <input name="what_paid" id="what_paid" class="form-control" value="0">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">What remain</label>
+                    <input name="what_remain" id="what_remain" class="form-control" value="0">
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="">Notes for the invoice</label>
+                    <input type="text" style="background-color: lightgoldenrodyellow" name="notes" id="notes" class="form-control" value="{{$invoice_data['notes']}}">
+                </div>
+            </div>
+            <div class="col-md-12 text-centr">
+                <hr>
+            </div>
+
+        </div>
 
 @else
 <div class="alert alert-danger">

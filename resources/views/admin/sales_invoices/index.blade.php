@@ -37,7 +37,10 @@ Sales Invoices
       <input type="hidden" name="ajax_get_store" id="ajax_get_store" value="{{route('admin.sales_invoices.store')}}">
       <input type="hidden" name="ajax_get_load_invoice_update_modal" id="ajax_get_load_invoice_update_modal" value="{{route('admin.sales_invoices.load_invoice_update_modal')}}">
       <input type="hidden" name="ajax_get_Add_item_to_invoice" id="ajax_get_Add_item_to_invoice" value="{{route('admin.sales_invoices.Add_item_to_invoice')}}">
+      <input type="hidden" name="ajax_get_reload_items_in_invoice" id="ajax_get_reload_items_in_invoice" value="{{route('admin.sales_invoices.reload_items_in_invoice')}}">
+      <input type="hidden" name="ajax_get_recalclate_parent_invoice" id="ajax_get_recalclate_parent_invoice" value="{{route('admin.sales_invoices.recalclate_parent_invoice')}}">
 
+      
 {{-- for search/end --}}
 
       <button class="btn btn-secondary" id="LoadModalAddBtnMirror" data-target="#AddNewInvoiceModalMirror" data-toggle="modal">Invoice price display mirror</button>

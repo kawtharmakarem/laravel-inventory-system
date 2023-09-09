@@ -58,6 +58,7 @@ class SaleInvoiceController extends Controller
             $customers = Customer::select('customer_code', 'name')->where(['com_code' => $com_code, 'active' => 1])->get();
             $delegates = Delegate::select('delegate_code', 'name')->where(['com_code' => $com_code, 'active' => 1])->get();
             $sales_material_types = Sales_material_types::select('id', 'name')->where(['com_code' => $com_code, 'active' => 1])->get();
+
             return view('admin.sales_invoices.loadModalAddInvoiceActive', ['item_cards' => $item_cards, 'stores' => $stores, 'user_shift' => $user_shift, 'customers' => $customers, 'delegates' => $delegates, 'sales_material_types' => $sales_material_types]);
         }
     }
@@ -212,7 +213,15 @@ class SaleInvoiceController extends Controller
             $delegates = Delegate::select('delegate_code', 'name')->where(['com_code' => $com_code, 'active' => 1])->get();
             $customers = Customer::select('customer_code', 'name')->where(['com_code' => $com_code, 'active' => 1])->get();
             $sales_material_types = Sales_material_types::select('id', 'name')->where(['com_code' => $com_code, 'active' => 1])->get();
-            return view('admin.sales_invoices.load_invoice_update_modal', ['invoice_data' => $invoice_data, 'item_cards' => $item_cards, 'stores' => $stores, 'user_shift' => $user_shift, 'delegates' => $delegates, 'customers' => $customers, 'sales_material_types' => $sales_material_types]);
+            $sales_invoice_details = SalesInvoiceDetail::select()->where(['com_code' => $com_code, 'sales_invoices_auto_serial' => $request->auto_serial])->get();
+            if (!empty($sales_invoice_details)) {
+                foreach ($sales_invoice_details as $info) {
+                    $info->store_name = Store::where(['com_code' => $com_code, 'id' => $info->store_id])->value('name');
+                    $info->item_name = Inv_Itemcard::where(['com_code' => $com_code, 'item_code' => $info->item_code])->value('name');
+                    $info->uom_name = Inv_Uom::where(['com_code' => $com_code, 'id' => $info->uom_id])->value('name');
+                }
+            }
+            return view('admin.sales_invoices.load_invoice_update_modal', ['invoice_data' => $invoice_data, 'item_cards' => $item_cards, 'stores' => $stores, 'user_shift' => $user_shift, 'delegates' => $delegates, 'customers' => $customers, 'sales_material_types' => $sales_material_types, 'sales_invoice_details' => $sales_invoice_details]);
         }
     }
     public function Add_item_to_invoice(Request $request)
@@ -351,5 +360,46 @@ class SaleInvoiceController extends Controller
         } catch (\Exception $ex) {
             echo "there is error " . $ex->getMessage();
         }
+    }
+    function reload_items_in_invoice(Request $request)
+    {
+        if($request->ajax())
+        {
+            $com_code=auth()->user()->com_code;
+            $sales_invoice_details=SalesInvoiceDetail::select('*')->where(['com_code'=>$com_code,'sales_invoices_auto_serial'=>$request->auto_serial])->get();
+            if(!empty($sales_invoice_details)){
+                foreach ($sales_invoice_details as $info) {
+                  $info->store_name=Store::where(['com_code'=>$com_code,'id'=>$info->store_id])->value('name');
+                  $info->item_name=Inv_Itemcard::where(['com_code'=>$com_code,'item_code'=>$info->item_code])->value('name');
+                  $info->uom_name=Inv_Uom::where(['com_code'=>$com_code,'id'=>$info->uom_id])->value('name');
+                }
+            }
+            return view('admin.sales_invoices.reload_items_in_invoice',['sales_invoice_details'=>$sales_invoice_details]);
+        }
+    }
+    function recalclate_parent_invoice(Request $request)
+    {
+      if($request->ajax())
+      {
+        $com_code=auth()->user()->com_code;
+        $invoice_data=Sale_Invoice::select('*')->where(['com_code'=>$com_code,'auto_serial'=>$request->auto_serial])->first();
+        if(!empty($invoice_data)){
+            if(!empty($invoice_data['is_approved']==0)){
+                $dataUpdateParent['total_cost_items']=$request->total_cost_items;
+                $dataUpdateParent['tax_percent']=$request->tax_percent;
+                $dataUpdateParent['tax_value']=$request->tax_value;
+                $dataUpdateParent['total_before_discount']=$request->total_before_discount;
+                $dataUpdateParent['discount_type']=$request->discount_type;
+                $dataUpdateParent['discount_percent']=$request->discount_percent;
+                $dataUpdateParent['discount_value']=$request->discount_value;
+                $dataUpdateParent['total_cost']=$request->total_cost;
+                $dataUpdateParent['notes']=$request->notes;
+                $dataUpdateParent['updated_at']=date("Y-m-d H:i:s");
+                $dataUpdateParent['updated_by']=auth()->user()->id;
+                update(new Sale_Invoice(),$dataUpdateParent,array('com_code'=>$com_code,'auto_serial'=>$request->auto_serial));
+                echo json_encode('done');
+            }
+        }
+      }
     }
 }
