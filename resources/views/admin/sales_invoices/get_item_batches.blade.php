@@ -3,8 +3,8 @@
     <label>      
         Quantities in selected branch
     </label>
-    <select  id="inv_itemcard_batches_autoserial" class="form-control " style="width: 100%;">
-      @if (@isset($inv_itemcard_batches) && !@empty($inv_itemcard_batches) && count($inv_itemcard_batches)>0)
+    <select  id="inv_itemcard_batches_autoserial" name="inv_itemcard_batches_autoserial" class="form-control " style="width: 100%;">
+      @if (@isset($inv_itemcard_batches) && !@empty($inv_itemcard_batches) && count($inv_itemcard_batches)>0 )
       @if($uom_Data['is_master']==1)
       @foreach ( $inv_itemcard_batches as $info )
       @if($item_card_Data['item_type']==2)

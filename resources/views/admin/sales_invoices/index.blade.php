@@ -39,12 +39,13 @@ Sales Invoices
       <input type="hidden" name="ajax_get_Add_item_to_invoice" id="ajax_get_Add_item_to_invoice" value="{{route('admin.sales_invoices.Add_item_to_invoice')}}">
       <input type="hidden" name="ajax_get_reload_items_in_invoice" id="ajax_get_reload_items_in_invoice" value="{{route('admin.sales_invoices.reload_items_in_invoice')}}">
       <input type="hidden" name="ajax_get_recalclate_parent_invoice" id="ajax_get_recalclate_parent_invoice" value="{{route('admin.sales_invoices.recalclate_parent_invoice')}}">
+      <input type="hidden" name="ajax_get_remove_active_row_item" id="ajax_get_remove_active_row_item" value="{{route('admin.sales_invoices.remove_active_row_item')}}">
 
       
 {{-- for search/end --}}
 
       <button class="btn btn-secondary" id="LoadModalAddBtnMirror" data-target="#AddNewInvoiceModalMirror" data-toggle="modal">Invoice price display mirror</button>
-      <button class="btn btn-warning" id="LoadModalAddBtnActiveInvoice" data-target="#AddNewInvoiceModalActive" data-toggle="modal">AddActiveInvoice</button>
+      <button class="btn btn-warning" id="LoadModalAddBtnActive" data-target="#AddNewInvoiceModalActive" data-toggle="modal">AddActiveInvoice</button>
  
     </div>
 

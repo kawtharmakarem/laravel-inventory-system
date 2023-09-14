@@ -17,7 +17,7 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="">Invoice category</label>
-                <select name="sales_material_type_id" id="sales_material_type_id" class="form-control select2">
+                <select name="sales_material_type_id" id="sales_material_type_id" class="form-control">
                     <option value="">select invoice category</option>
                     @if (@isset($sales_material_types) && !@empty($sales_material_types))
                         @foreach ($sales_material_types as $info)
@@ -203,7 +203,7 @@
                         <td>{{$info->quantity*1}}</td>
                         <td>{{$info->total_price*1}}</td>
                         <td>
-                            <button class="btn btn-sm btn-danger remove_active_row_item">Delete</button>
+                            <button  data-id="{{$info->id}}" class="btn btn-sm btn-danger are_you_sure remove_active_row_item">Delete</button>
                         </td>
                         
                     </tr>

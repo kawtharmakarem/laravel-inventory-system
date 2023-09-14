@@ -385,6 +385,17 @@ class SaleInvoiceController extends Controller
         $invoice_data=Sale_Invoice::select('*')->where(['com_code'=>$com_code,'auto_serial'=>$request->auto_serial])->first();
         if(!empty($invoice_data)){
             if(!empty($invoice_data['is_approved']==0)){
+                $dataUpdateParent['invoice_date']=$request->invoice_date;
+                $dataUpdateParent['is_has_customer']=$request->is_has_customer;
+                if($dataUpdateParent['is_has_customer']!=""){
+                    $dataUpdateParent['customer_code']=$request->customer_code;
+
+                }else{
+                    $dataUpdateParent['customer_code']=null;
+                }
+                $dataUpdateParent['delegate_code']=$request->delegate_code;
+                $dataUpdateParent['bill_type']=$request->bill_type;
+                $dataUpdateParent['sales_material_type']=$request->sales_material_type_id;
                 $dataUpdateParent['total_cost_items']=$request->total_cost_items;
                 $dataUpdateParent['tax_percent']=$request->tax_percent;
                 $dataUpdateParent['tax_value']=$request->tax_value;
@@ -401,5 +412,75 @@ class SaleInvoiceController extends Controller
             }
         }
       }
+    }
+  public function remove_active_row_item(Request $request){
+       if($request->ajax()){
+        $com_code=auth()->user()->com_code;
+        $invoice_data=Sale_Invoice::select('is_approved','is_has_customer','customer_code')->where(['com_code'=>$com_code,'auto_serial'=>$request->auto_serial])->first();
+        if(!empty($invoice_data)){
+            if($invoice_data['is_approved']==0){
+                $sales_invoice_details_data=SalesInvoiceDetail::select('batch_auto_serial','quantity','store_id','item_code')->where(['com_code'=>$com_code,'id'=>$request->id])->first();
+                if(!empty($sales_invoice_details_data)){
+                   $batch_data=Inv_Itemcard_Batch::select('quantity','unit_cost_price','id')->where(['com_code'=>$com_code,'auto_serial'=>$sales_invoice_details_data['batch_auto_serial']])->first();
+                   if(!empty($batch_data)){
+                    $item_card_Data=Inv_Itemcard::select('uom_id','does_has_retailunit','retail_uom_quntToParent','retail_uom_id')->where(['com_code'=>$com_code,'item_code'=>$sales_invoice_details_data['item_code']])->first();
+                    if(!empty($item_card_Data)){
+                        $MainUomName=Inv_Uom::where(['com_code'=>$com_code,'id'=>$item_card_Data['uom_id']])->value('name');
+
+                        //delete row from the invoice
+                        $flag=SalesInvoiceDetail::where(['com_code'=>$com_code,'id'=>$request->id])->delete();
+                        if($flag){
+                            //return quantity to batch
+                            $quantityBeforMove=Inv_Itemcard_Batch::where(['com_code'=>$com_code,'item_code'=>$sales_invoice_details_data['item_code']])->sum('quantity');
+                            $quantityBeforMoveCurrntStore=Inv_Itemcard_Batch::where(['com_code'=>$com_code,'store_id'=>$sales_invoice_details_data['store_id'],'item_code'=>$sales_invoice_details_data['item_code']])->sum('quantity');
+
+                            //update current batch
+                            $dataUpdateOldBatch['quantity']=$batch_data['quantity']+$sales_invoice_details_data['quantity'];
+                            $dataUpdateOldBatch['total_cost_price']=$dataUpdateOldBatch['quantity']*$batch_data['unit_cost_price'];
+                            $dataUpdateOldBatch['updated_at']=date("Y-m-d H:i:s");
+                            $dataUpdateOldBatch['updated_by']=auth()->user()->id;
+                            $flag=Inv_Itemcard_Batch::where(['id'=>$batch_data['id'],'com_code'=>$com_code])->update($dataUpdateOldBatch);
+                            $quantityAfterMove=Inv_Itemcard_Batch::where(['com_code'=>$com_code,'item_code'=>$sales_invoice_details_data['item_code']])->sum('quantity');
+                            $quantityAfterMoveCurrentStore=Inv_Itemcard_Batch::where(['com_code'=>$com_code,'item_code'=>$sales_invoice_details_data['item_code'],'store_id'=>$sales_invoice_details_data['store_id']])->sum('quantity');
+                            $dataInsert_inv_itemcard_movements['inv_itemcard_movements_categories']=2;
+                            $dataInsert_inv_itemcard_movements['items_movements_types']=15;
+                            $dataInsert_inv_itemcard_movements['item_code']=$sales_invoice_details_data['item_code'];
+                            $dataInsert_inv_itemcard_movements['FK_table']=$request->auto_serial;
+                            $dataInsert_inv_itemcard_movements['FK_table_details']=$request->id;
+                            if($invoice_data['is_has_customer']){
+                                $customerName=Customer::where(['com_code'=>$com_code,'customer_code'=>$invoice_data['customer_code']])->value('name');
+
+                            }else{
+                                $customerName="no customer";
+                            }
+                            $dataInsert_inv_itemcard_movements['byan'] = "Delete item from customer :" . " " . $customerName . "Bill number :" . " " . $request->invoiceautoserial;
+                                            //كمية الصنف بكل المخازن قبل الحركة
+                                            $dataInsert_inv_itemcard_movements['quantity_befor_movement'] = "amount : " . " " . ($quantityBeforMove * 1) . " " . $MainUomName;
+                                            // كمية الصنف بكل المخازن بعد  الحركة
+                                            $dataInsert_inv_itemcard_movements['quantity_after_move'] = "amount : " . " " . ($quantityAfterMove * 1) . " " . $MainUomName;
+
+                                            //كمية الصنف  المخزن الحالي قبل الحركة
+                                            $dataInsert_inv_itemcard_movements['quantity_befor_move_store'] = "amount :" . " " . ($quantityBeforMoveCurrntStore * 1) . " " . $MainUomName;
+                                            // كمية الصنف بالمخزن الحالي بعد الحركة الحركة
+                                            $dataInsert_inv_itemcard_movements['quantity_after_move_store'] = "amount : " . " " . ($quantityAfterMoveCurrentStore * 1) . " " . $MainUomName;
+                                            $dataInsert_inv_itemcard_movements["store_id"]=$sales_invoice_details_data['store_id'];
+                                            $dataInsert_inv_itemcard_movements['created_at']=date("Y-m-d H:i:s");
+                                            $dataInsert_inv_itemcard_movements['added_by']=auth()->user()->id;
+                                            $dataInsert_inv_itemcard_movements['date']=date("Y-m-d");
+                                            $dataInsert_inv_itemcard_movements['com_code']=$com_code;
+                                            $flag=Inv_Itemcard_Movement::create($dataInsert_inv_itemcard_movements);
+                                            if($flag){
+                                                do_update_itemCardQuantity(new Inv_Itemcard(),$sales_invoice_details_data['item_code'],new Inv_Itemcard_Batch(),$item_card_Data['does_has_retailunit'],$item_card_Data['retail_uom_quntToParent']);
+                                                echo json_encode('done');
+                                            }
+                                           
+                        }   
+                    }
+                   } 
+                }
+           
+            }
+        }
+    } 
     }
 }
