@@ -7,14 +7,14 @@
     <div class="col-md-4">
         <div class="form-group">
             <label for="">Invoice date</label>
-            <input type="date" name="invoice_date" id="invoice_date" value="@php echo date('Y-m-d'); @endphp" class="form-control">
+            <input type="date" name="invoice_date_activeAdd" id="invoice_date_activeAdd" value="@php echo date('Y-m-d'); @endphp" class="form-control">
         </div>
     </div>
 
     <div class="col-md-4">
         <div class="form-group">
             <label for="">InvoiceCategory</label>
-            <select name="sales_material_type_id" id="sales_material_type_id" class="form-control">
+            <select name="sales_material_type_id_activeAdd" id="sales_material_type_id_activeAdd" class="form-control">
                 <option value="">Select invoice category</option>
 
                 @if (@isset($sales_material_types) && !@empty($sales_material_types))
@@ -30,7 +30,7 @@
     <div class="col-md-4">
         <div class="form-group">
             <label for="">Is there a customer</label>
-            <select name="is_has_customer" id="is_has_customer" class="form-control">
+            <select name="is_has_customer_activeAdd" id="is_has_customer_activeAdd" class="form-control">
                 <option value="1" selected>He's is a customer</option>
                 <option value="0" selected>Not a customer</option>
             </select>
@@ -41,7 +41,7 @@
         <div class="form-group">
             <label for="">Customers data (<a title="Add new customer" href="#">New<i
                         class="fa fa-plus-circle"></i></a>)</label>
-            <select name="customer_code" id="customer_code" class="form-control select2">
+            <select name="customer_code_activeAdd" id="customer_code_activeAdd" class="form-control select2">
                 <option value="">no customer</option>
                 @if (@isset($customers) && !@empty($customers))
                     @foreach ($customers as $info)
@@ -57,7 +57,7 @@
         <div class="form-group">
             <label for="">Delegate data (<a title="Add new customer" href="#">New<i
                         class="fa fa-plus-circle"></i></a>)</label>
-            <select name="delegate_code" id="delegate_code" class="form-control select2">
+            <select name="delegate_code_activeAdd" id="delegate_code_activeAdd" class="form-control select2">
                 <option value="">select delegate</option>
                 @if (@isset($delegates) && !@empty($delegates))
                     @foreach ($delegates as $info)
@@ -65,6 +65,16 @@
                     @endforeach
 
                 @endif
+            </select>
+        </div>
+    </div>
+     
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="">Bill type</label>
+            <select name="bill_type_activeAdd" id="bill_type_activeAdd" class="form-control">
+                <option value="1">Cash</option>
+                <option value="2">Deferred</option>
             </select>
         </div>
     </div>

@@ -318,8 +318,8 @@
                 <div class="form-group">
                     <label for="">Bill type</label>
                     <select name="bill_type" class="form-control" id="bill_type">
-                        <option @if($invoice_data['bill_type']) selected  @endif value="1">Cash</option>
-                        <option @if($invoice_data['bill_type']) selected @endif value="2">Deferred</option>
+                        <option @if($invoice_data['bill_type']==1) selected  @endif value="1">Cash</option>
+                        <option @if($invoice_data['bill_type']==2) selected @endif value="2">Deferred</option>
                     </select>
                 </div>
             </div>
@@ -327,14 +327,14 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="">What paid</label>
-                    <input name="what_paid" id="what_paid" class="form-control" value="0">
+                    <input name="what_paid" id="what_paid" class="form-control" @if($invoice_data['bill_type']==1) readonly @endif value="@if($invoice_data['bill_type']==1) {{$invoice_data['total_cost']*1}} @else 0 @endif">
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="">What remain</label>
-                    <input name="what_remain" id="what_remain" class="form-control" value="0">
+                    <input name="what_remain" id="what_remain" class="form-control"  value="@if($invoice_data['bill_type']==1) 0 @else {{$invoice_data['what_remain']*1}} @endif">
                 </div>
             </div>
 
@@ -348,6 +348,9 @@
                 <hr>
             </div>
 
+        </div>
+        <div class="col-md-6 text-right">
+            <button class="btn btn-sm btn-warning" id="DoApproveInvoiceFinally" style="margin-top: 31px;">Approve&transfer Invoice</button>
         </div>
 
 @else

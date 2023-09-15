@@ -218,6 +218,8 @@ Route::post('/sales_invoices/Add_item_to_invoice/',[SaleInvoiceController::class
 Route::post('/sales_invoices/reload_items_in_invoice/',[SaleInvoiceController::class,'reload_items_in_invoice'])->name('admin.sales_invoices.reload_items_in_invoice');
 Route::post('/sales_invoices/recalclate_parent_invoice/',[SaleInvoiceController::class,'recalclate_parent_invoice'])->name('admin.sales_invoices.recalclate_parent_invoice');
 Route::post('/sales_invoices/remove_active_row_item/',[SaleInvoiceController::class,'remove_active_row_item'])->name('admin.sales_invoices.remove_active_row_item');
+Route::post('/sales_invoices/DoApproveInvoiceFinally/',[SaleInvoiceController::class,'DoApproveInvoiceFinally'])->name('admin.sales_invoices.DoApproveInvoiceFinally');
+Route::post('/sales_invoices/load_usershiftDiv/',[SaleInvoiceController::class,'load_usershiftDiv'])->name('admin.sales_invoices.load_usershiftDiv');
 
 
 
