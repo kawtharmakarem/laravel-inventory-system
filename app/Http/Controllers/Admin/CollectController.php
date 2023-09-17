@@ -8,7 +8,9 @@ use App\Models\Account;
 use App\Models\Account_types;
 use App\Models\Admin;
 use App\Models\Admin_Shift;
+use App\Models\Customer;
 use App\Models\Mov_Type;
+use App\Models\Sale_Invoice;
 use App\Models\Supplier;
 use App\Models\SupplierWithOrder;
 use App\Models\Treasury;
@@ -96,7 +98,16 @@ class CollectController extends Controller
         {
             $dataUpdateTreasuries['last_isal_collect']=$data_insert['isal_number'];
             update(new Treasury(),$dataUpdateTreasuries,array('com_code'=>$com_code,'id'=>$request->treasuries_id));
-           refresh_account_balance($request->account_number,new Account(),new Supplier(),new Treasury_Transaction(),new SupplierWithOrder(),false);
+            $account_type=Account::where(['account_number'=>$request->account_number])->value('account_type');
+            if($account_type==2){
+              refresh_account_balance_supplier($request->account_number,new Account(),new Supplier(),new Treasury_Transaction(),new SupplierWithOrder(),false);
+
+            }elseif($account_type==3){
+              refresh_account_balance_customer($request->account_number,new Account(),new Sale_Invoice(),new Treasury_Transaction(),new Customer(),false);
+
+            }else{
+              //after
+            }
             return redirect()->route('admin.collect_transaction.index')->with(['success'=>'Data is updated successfully']); 
         }
       }

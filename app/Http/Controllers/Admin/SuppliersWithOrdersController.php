@@ -469,7 +469,6 @@ class SuppliersWithOrdersController extends Controller
     $flag = update(new SupplierWithOrder(), $dataUpdateParent, array('auto_serial' => $auto_serial, 'com_code' => $com_code, 'order_type' => 1));
     if ($flag) {
       //affect on supplier balance
-      refresh_account_balance($data['account_number'], new Account(), new Supplier(), new Treasury_Transaction(), new SupplierWithOrder(), false);
       //make treasuries_transaction action
       if ($request['what_paid'] > 0) {
         $treasury_data = Treasury::select('last_isal_exchange')->where(['com_code' => $com_code, 'id' => $user_shift['treasuries_id']])->first();
@@ -506,6 +505,8 @@ class SuppliersWithOrdersController extends Controller
           update(new Treasury(), $dataUpdateTreasuries, array('com_code' => $com_code, "id" => $user_shift['treasuries_id']));
         }
       }
+      refresh_account_balance_supplier($data['account_number'], new Account(), new Supplier(), new Treasury_Transaction(), new SupplierWithOrder(), false);
+
       $items = SupplierWithOrderDetail::select('*')->where(['suppliers_with_orders_auto_serial' => $auto_serial, 'com_code' => $com_code, 'order_type' => 1])->orderby('id', 'ASC')->get();
       if (!empty($items)) {
         foreach ($items as $info) {

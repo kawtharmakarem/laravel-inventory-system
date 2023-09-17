@@ -2,6 +2,8 @@
 
 use App\Models\Inv_Itemcard;
 use App\Models\Inv_Itemcard_Batch;
+use App\Models\Sale_Invoice;
+use App\Models\Treasury_Transaction;
 use Illuminate\Support\Facades\Config;
 
 function uploadImage($folder,$image)
@@ -84,7 +86,7 @@ function get_sum_where($model,$field_name,$where)
     return $flag;
 }
 /*--------------- refresh account balance ---------------------*/
-function refresh_account_balance($account_number=null,$AccountModel=null,$SupplierModel=null,$Treasury_TransactionModel=null,$suppliers_with_ordersModel=null,$returnFlag=false){
+function refresh_account_balance_supplier($account_number=null,$AccountModel=null,$SupplierModel=null,$Treasury_TransactionModel=null,$suppliers_with_ordersModel=null,$returnFlag=false){
     $com_code=auth()->user()->com_code;
     //الرصيد الافتتاحي للرصيد لحظة تكويده
    $AccountData=$AccountModel::select('start_balance','account_type')->where(['com_code'=>$com_code,'account_number'=>$account_number])->first();
@@ -105,6 +107,27 @@ function refresh_account_balance($account_number=null,$AccountModel=null,$Suppli
   }
 }
 
+}
+/*-----------------refresh_account_balance_customer-------------*/
+function refresh_account_balance_customer($account_number=null,$AccountModel=null,$Sale_InvoiceModel=null,$Treasury_TransactionModel=null,$customerModel=null,$returnFlag=false)
+{
+ $com_code=auth()->user()->com_code;
+ //first balance for the account
+ $AccountData=$AccountModel::select('start_balance','account_type')->where(['com_code'=>$com_code,'account_number'=>$account_number])->first();
+ if($AccountData['account_type']==3){
+    $the_net_sales_invoicesForCustomer=$Sale_InvoiceModel::where(['com_code'=>$com_code,'account_number'=>$account_number])->sum('money_for_account');
+    $the_net_sales_invoicesReturnForCustomer=0;
+    $the_net_in_treasuries_transactions=$Treasury_TransactionModel::where(['com_code'=>$com_code,'account_number'=>$account_number])->sum('money_for_account');
+    $the_final_balance=$AccountData['start_balance']+$the_net_sales_invoicesForCustomer+$the_net_sales_invoicesReturnForCustomer+$the_net_in_treasuries_transactions;
+    $dataToUpdateAccount['current_balance']=$the_final_balance;
+    $AccountModel::where(['com_code'=>$com_code,'account_number'=>$account_number])->update($dataToUpdateAccount);
+    $datatoUpdateSupplier['current_balance']=$the_final_balance;
+    $customerModel::where(['com_code'=>$com_code,'account_number'=>$account_number])->update($datatoUpdateSupplier);
+    if($returnFlag){
+        return $the_final_balance;
+    }
+
+ }
 }
 /*-----------------get_user_shift------------------------------ */
 function get_user_shift($Admin_shift,$Treasury=null,$Treasury_Transaction=null){

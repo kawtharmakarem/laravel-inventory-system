@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\Admin;
 use App\Models\Admin_Shift;
 use App\Models\Customer;
@@ -18,6 +19,7 @@ use App\Models\Store;
 use App\Models\Treasury;
 use App\Models\Treasury_Transaction;
 use Illuminate\Http\Request;
+use PhpParser\Builder\Trait_;
 
 class SaleInvoiceController extends Controller
 {
@@ -531,11 +533,15 @@ class SaleInvoiceController extends Controller
                             if($flag){
                                 $dataUpdateTreasuries['last_isal_exchange']=$dataInsert_treasuries_transactions['isal_number'];
                                 Treasury::where(['com_code'=>$com_code,'id'=>$user_shift['treasuries_id']])->update($dataUpdateTreasuries);
-                                echo json_encode('done');
                             }
 
 
                         }
+                        if($invoice_data['is_has_customer']==1){
+                            refresh_account_balance_customer($customerData['account_number'],new Account(),new Sale_Invoice(),new Treasury_Transaction(),new Customer(),false);
+                        }
+                        echo json_encode('done');
+
                     }
                 }
             }
