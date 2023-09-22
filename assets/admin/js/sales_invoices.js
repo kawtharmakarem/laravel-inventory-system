@@ -730,6 +730,7 @@ $.ajax({
 });
 });
 
+
 $(document).on('mouseenter','#DoApproveInvoiceFinally', function () {
   var token_search=$('#token_search').val();
   var ajax_load_usershiftDiv=$('#ajax_load_usershiftDiv').val();
@@ -745,7 +746,24 @@ $(document).on('mouseenter','#DoApproveInvoiceFinally', function () {
 
 });
 
-
+$(document).on('click','.load_invoice_details_modal', function () {
+  var token=$('#token_search').val();
+  var url=$('#ajax_load_invoice_details_modal').val();
+  var auto_serial=$(this).data("autoserial");
+  $.ajax({
+    type: "post",
+    url: url,
+    data: {'_token':token,'auto_serial':auto_serial},
+    dataType: "html",
+    success: function (data) {
+      $('#InvoiceModalActiveDetailsBody').html(data);
+      $('#InvoiceModalActiveDetails').modal("show");
+    },error:function(){
+      alert('Sorry!Something went wrong');
+    }
+  });
+  
+});
 
 function reload_items_in_invoice(){
   var token = $("#token_search").val();
@@ -786,7 +804,67 @@ $(document).on('change','#bill_type', function () {
   }
 });
 
+$('input[type=radio][name=searchbyradio]').change(function (e) { 
+make_search();  
+});
+$(document).on('input','#search_by_text', function () {
+  make_search();
+});
+$(document).on('change','#customer_code_search', function () {
+  make_search();
+});
+$(document).on('change','#delegates_code_search', function () {
+  make_search();
+});
+$(document).on('change','#sales_material_types_search', function () {
+  make_search();
+});
+$(document).on('change','#bill_type_search', function () {
+  make_search();
+});
+$(document).on('change','#discount_type_search', function () {
+  make_search();
+});
+$(document).on('change','#is_approved_search', function () {
+  make_search();
+});
+$(document).on('change','#invoice_date_from', function () {
+  make_search();
+});
+$(document).on('change','#invoice_date_to', function () {
+  
+});
 
+
+function make_search(){
+  var token=$('#token_search').val();
+  var customer_code=$('#customer_code_search').val();
+  var delegates_code=$('#delegates_code_search').val();
+  var sales_material_types=$('#sales_material_types_search').val();
+  var bill_type=$('#bill_type_search').val();
+  var discount_type=$('#discount_type_search').val();
+  var is_approved=$('#is_approved_search').val();
+  var invoice_date_from=$('#invoice_date_from').val();
+  var invoice_date_to=$('#invoice_date_to').val();
+  var search_by_text=$('#search_by_text').val();
+  var seachbyradio=$('input[type=radio][name=searchbyradio]:checked').val();
+  var url=$('#ajax_ajax_search').val();
+  $.ajax({
+    type: "post",
+    url: url,
+    data: {'_token':token,customer_code:customer_code,delegates_code:delegates_code,
+    sales_material_types:sales_material_types,bill_type:bill_type,discount_type:discount_type,
+    is_approved:is_approved,invoice_date_from:invoice_date_from,invoice_date_to:invoice_date_to,
+    search_by_text:search_by_text,seachbyradio:seachbyradio
+  },
+    dataType: "html",
+    success: function (data) {
+      $('#ajax_response_searchdiv').html(data);
+    },error:function(){
+      alert('sorry!something went wrong');
+    }
+  });
+}
 function recalcualte() {
   var total_cost_items = 0;
   $(".item_total_array").each(function(){

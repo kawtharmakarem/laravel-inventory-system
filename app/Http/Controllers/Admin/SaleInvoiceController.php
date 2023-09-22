@@ -28,7 +28,7 @@ class SaleInvoiceController extends Controller
         $com_code = auth()->user()->com_code;
         $data = Sale_Invoice::select('*')->where(['com_code' => $com_code])->orderby('id', 'DESC')->paginate(PAGINATION_COUNT);
         if (!empty($data)) {
-            foreach ($data as $key => $info) {
+            foreach ($data as  $info) {
                 $info->added_by_admin = Admin::where(['id' => $info->added_by, 'com_code' => $com_code])->value('name');
                 $info->sales_material_type_name = Sales_material_types::where(['id' => $info->sales_material_type, 'com_code' => $com_code])->value('name');
                 if ($info->is_has_customer == 1) {
@@ -37,8 +37,13 @@ class SaleInvoiceController extends Controller
                     $info->customer_name = "no customer";
                 }
             }
+
         }
-        return view('admin.sales_invoices.index', ['data' => $data]);
+        $delegates=Delegate::select('delegate_code','name')->where(['com_code'=>$com_code,'active'=>1])->get();
+        $customers=Customer::select('customer_code','name')->where(['com_code'=>$com_code,'active'=>1])->get();
+        $sales_material_types=Sales_material_types::select('id','name')->where(['com_code'=>$com_code,'active'=>1])->get();
+        return view('admin.sales_invoices.index', ['data' => $data,'delegates'=>$delegates,'customers'=>$customers,'sales_material_types'=>$sales_material_types]);
+
     }
     public function load_modal_add_mirror(Request $request)
     {
@@ -556,5 +561,190 @@ class SaleInvoiceController extends Controller
 
         }
         return view('admin.sales_invoices.load_usershiftDiv',['user_shift'=>$user_shift]);
+    }
+    public function delete($id)
+    {
+        try
+        {
+            $com_code=auth()->user()->com_code;
+            $sales_invoice_data=Sale_Invoice::select('is_approved','auto_serial')->where(['com_code'=>$com_code,'id'=>$id])->first();
+            if(!empty($sales_invoice_data)){
+              $flag=Sale_Invoice::where(['com_code'=>$com_code,'id'=>$id])->delete();
+              if($flag){
+                SalesInvoiceDetail::where(['sales_invoices_auto_serial'=>$sales_invoice_data['auto_serial'],'com_code'=>$com_code])->delete();
+                return redirect()->back()->with(['success'=>"Data deleted successfully"]);
+              } else{
+                return redirect()->back()->with(['error'=>'Sorry !Something went wrong']);
+              } 
+            }else{
+                return redirect()->back()->with(['error'=>'Sorry !unable to find required data']);
+            }
+        }
+        catch(\Exception $ex){
+           return redirect()->back()->with(['error'=>'Sorry! Something went wrong'.$ex->getMessage()]);
+        }
+    }
+    public function load_invoice_details_modal(Request $request)
+    {
+     if($request->ajax()){
+        $com_code=auth()->user()->com_code;
+        $invoice_data=Sale_Invoice::select('*')->where(['com_code'=>$com_code,'auto_serial'=>$request->auto_serial])->first();
+        $delegates=Delegate::select('delegate_code','name')->where(['com_code'=>$com_code,'delegate_code'=>$invoice_data['delegate_code']])->get();
+       if($invoice_data['is_has_customer']==1){
+        $customers=Customer::select('customer_code','name')->where(['com_code'=>$com_code,'customer_code'=>$invoice_data['customer_code']])->get();
+
+       }
+       $sales_material_types=Sales_material_types::select('id','name')->where(['com_code'=>$com_code,'id'=>$invoice_data['sales_material_type']])->get();
+       $sales_invoice_details=SalesInvoiceDetail::select('*')->where(['com_code'=>$com_code,'sales_invoices_auto_serial'=>$request->auto_serial])->get();
+       if(!empty($sales_invoice_details)){
+        foreach ($sales_invoice_details as $info) {
+            $info->store_name=Store::where(['com_code'=>$com_code,'id'=>$info->store_id])->value('name');
+            $info->item_name=Inv_Itemcard::where(['com_code'=>$com_code,'item_code'=>$info->item_code])->value('name');
+            $info->uom_name=Inv_Uom::where(['com_code'=>$com_code,'id'=>$info->uom_id])->value('name');
+        }
+       }
+       return view('admin.sales_invoices.load_invoice_details_modal',['invoice_data'=>$invoice_data,'delegates'=>$delegates,'customers'=>$customers,'sales_material_types'=>$sales_material_types,'sales_invoice_details'=>$sales_invoice_details]);
+    }
+    }
+    public function ajax_search(Request $request)
+    {
+        if($request->ajax())
+        {
+            $com_code=auth()->user()->com_code;
+            $customer_code=$request->customer_code;
+            $delegates_code=$request->delegates_code;
+            $sales_material_types=$request->sales_material_types;
+            $bill_type=$request->bill_type;
+            $discount_type=$request->discount_type;
+            $is_approved=$request->is_approved;
+            $invoice_date_from=$request->invoice_date_from;
+            $invoice_date_to=$request->invoice_date_to;
+            $search_by_text=$request->search_by_text;
+            $seachbyradio=$request->seachbyradio;
+            if($customer_code=='all')
+            {
+                $field1='id';
+                $operator1=">";
+                $value1=0;
+            }elseif($customer_code=='without'){
+                $field1='customer_code';
+                $operator1="=";
+                $value1=null;
+            }else{
+                $field1='customer_code';
+                $operator1="=";
+                $value1=$customer_code;
+            }
+
+            if($discount_type=='all'){
+                $field2="id";
+                $operator2=">";
+                $value2=0;
+            }elseif($discount_type=='without'){
+                $field2='discount_type';
+                $operator2="=";
+                $value2=null;
+            }else{
+                $field2='discount_type';
+                $operator2="=";
+                $value2=$discount_type;
+            }
+
+            if($delegates_code=='all'){
+                $field3="id";
+                $operator3=">";
+                $value3=0;
+
+            }else{
+                $field3="delegate_code";
+                $operator3="=";
+                $value3=$delegates_code;
+            }
+
+            if($sales_material_types=="all"){
+                $field4="id";
+                $operator4=">";
+                $value4=0;
+            }else{
+                $field4='sales_material_type';
+                $operator4="=";
+                $value4=$sales_material_types;
+            }
+            if($bill_type=='all')
+            {
+                $field5="id";
+                $operator5=">";
+                $value5=0;
+            }else{
+                $field5='bill_type';
+                $operator5="=";
+                $value5=$bill_type;
+            }
+
+            if($is_approved=='all'){
+                $field6="id";
+                $operator6=">";
+                $value6=0;
+            }else{
+                $field6='is_approved';
+                $operator6="=";
+                $value6=$is_approved;
+            }
+            if($invoice_date_from==''){
+                $field7="id";
+                $operator7=">";
+                $value7=0;
+            }else{
+                $field7="invoice_date";
+                $operator7=">=";
+                $value7=$invoice_date_from;
+            }
+            if($invoice_date_to==""){
+                $field8="id";
+                $operator8=">";
+                $value8=0;
+
+            }else{
+                $field8="invoice_date";
+                $operator8="<=";
+                $value8=$invoice_date_to;
+            }
+            if($search_by_text!=''){
+                if($seachbyradio=="auto_serial"){
+                    $field9="auto_serial";
+                    $operator9="=";
+                    $value9=$search_by_text;
+
+                }elseif($seachbyradio=="customer_code"){
+                    $field9='customer_code';
+                    $operator9="=";
+                    $value9=$search_by_text;
+                }else{
+                    $field9="account_number";
+                    $operator9="=";
+                    $value9=$search_by_text;
+                }
+            }else{
+                $field9="id";
+                $operator9=">";
+                $value9=0;
+            }
+
+            $data=Sale_Invoice::where($field1,$operator1,$value1)->where($field2,$operator2,$value2)
+            ->where($field3,$operator3,$value3)->where($field4,$operator4,$value4)->where($field5,$operator5,$value5)
+            ->where($field6,$operator6,$value6)->where($field7,$operator7,$value7)->where($field8,$operator8,$value8)->where($field9,$operator9,$value9)->orderby('id','DESC')->paginate(PAGINATION_COUNT);
+            if(!empty($data)){
+                foreach ($data as $info) {
+                  $info->added_by_admin=Admin::where('id',$info->added_by)->value('name');
+                  $info->sales_material_types_name=Sales_material_types::where(['com_code'=>$com_code,'id'=>$info->sales_material_type])->value('name');
+                  if($info->is_has_customer==1){
+                    $info->customer_name=Customer::where(['com_code'=>$com_code,'customer_code'=>$info->customer_code])->value('name');
+                  }else{
+                    $info->customer_name="no customer";
+                  }
+                }
+            }
+         return view('admin.sales_invoices.ajax_search',['data'=>$data]);
+        }
     }
 }
