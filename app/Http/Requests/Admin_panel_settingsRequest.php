@@ -26,7 +26,9 @@ class Admin_panel_settingsRequest extends FormRequest
             'address'=>'required',
             'phone'=>'required',
             'customer_parent_account_number'=>'required',
-            'supplier_parent_account_number'=>'required'
+            'supplier_parent_account_number'=>'required',
+            'delegate_parent_account_number'=>'required',
+            'employees_parent_account_number'=>'required'
 
 
         ];
@@ -38,7 +40,9 @@ class Admin_panel_settingsRequest extends FormRequest
             'address.required'=>'Address is required',
             'phone.required'=>'Phone number is required',
             'customer_parent_account_number.required'=>'parent account number for customers is required',
-            'supplier_parent_account_number.required'=>'parent account number is for suppliers required'
+            'supplier_parent_account_number.required'=>'parent account number  for suppliers is required',
+            'delegate_parent_account_number.required'=>'parent account number for delegates is required',
+            'employees_parent_account_number.required'=>'parent account number for employees is required'
         ];
     }
 }

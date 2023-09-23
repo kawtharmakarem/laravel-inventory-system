@@ -48,15 +48,24 @@
         </tr>
 
         <tr>
-            <td class="width30">Parent account name</td>
+            <td class="width30">Parent account/customers</td>
             <td>{{$data['customer_parent_account_name']}}/ AccountNumber : ({{$data['customer_parent_account_number']}})</td>
         </tr>
 
         <tr>
-            <td class="width30">Parent account name</td>
+            <td class="width30">Parent account/suppliers</td>
             <td>{{$data['supplier_parent_account_name']}}/ AccountNumber : ({{$data['supplier_parent_account_number']}})</td>
         </tr>
 
+        <tr>
+            <td class="width30">Parent account/delegates</td>
+            <td>{{$data['delegate_parent_account_name']}}/ AccountNumber : ({{$data['delegate_parent_account_number']}})</td>
+        </tr> 
+
+        <tr>
+            <td class="width30">Parent account/employees</td>
+            <td>{{$data['employees_parent_account_name']}}/ AccountNumber : ({{$data['employees_parent_account_number']}})</td>
+        </tr> 
 
         <tr>
             <td class="width30">Phone</td>

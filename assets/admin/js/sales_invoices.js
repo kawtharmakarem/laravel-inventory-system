@@ -835,6 +835,37 @@ $(document).on('change','#invoice_date_to', function () {
   
 });
 
+$(document).on('click','#ajax_pagination_in_search a', function (e) {
+  e.preventDefault();
+
+  var token=$('#token_search').val();
+  var customer_code=$('#customer_code_search').val();
+  var delegates_code=$('#delegates_code_search').val();
+  var sales_material_types=$('#sales_material_types_search').val();
+  var bill_type=$('#bill_type_search').val();
+  var discount_type=$('#discount_type_search').val();
+  var is_approved=$('#is_approved_search').val();
+  var invoice_date_from=$('#invoice_date_from').val();
+  var invoice_date_to=$('#invoice_date_to').val();
+  var search_by_text=$('#search_by_text').val();
+  var seachbyradio=$('input[type=radio][name=searchbyradio]:checked').val();
+  var url=$(this).attr("href");
+  $.ajax({
+    type: "post",
+    url: url,
+    data: {'_token':token,customer_code:customer_code,delegates_code:delegates_code,
+    sales_material_types:sales_material_types,bill_type:bill_type,discount_type:discount_type,
+    is_approved:is_approved,invoice_date_from:invoice_date_from,invoice_date_to:invoice_date_to,
+    search_by_text:search_by_text,seachbyradio:seachbyradio
+  },
+    dataType: "html",
+    success: function (data) {
+      $('#ajax_response_searchdiv').html(data);
+
+    }
+  });
+  
+});
 
 function make_search(){
   var token=$('#token_search').val();

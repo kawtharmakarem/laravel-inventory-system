@@ -102,6 +102,8 @@
                  There is no update   
                 @endif
                 <a href="{{route('admin.treasuries.edit',$data['id'])}}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{{route('admin.treasuries.index')}}" class="btn btn-sm btn-secondary">back</a>
+
 
             </td>
         </tr>
@@ -116,7 +118,7 @@
     
     <div id="ajax_response_searchdiv">
 
-      @if (@isset($treasuries_delivery) && !@empty($treasuries_delivery))
+      @if (@isset($treasuries_delivery) && !@empty($treasuries_delivery) && count($treasuries_delivery))
   
       @php
           $i=1;

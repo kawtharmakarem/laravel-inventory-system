@@ -34,7 +34,7 @@ Treasuries
        
         <div id="ajax_response_searchdiv">
 
-            @if (@isset($data) && !@empty($data))
+            @if (@isset($data) && !@empty($data) && count($data)>0)
         
             @php
                 $i=1;

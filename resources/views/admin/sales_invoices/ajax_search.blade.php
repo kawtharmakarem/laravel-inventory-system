@@ -50,9 +50,12 @@
         </tbody>  
       
     </table>
+    <br>
 
-   <br>
-   {{ $data->links() }}<br>
+    <div class="col-md-12" id="ajax_pagination_in_search">
+      {{ $data->links() }}
+  
+   </div>
 
 @else
 <div class="alert alert-danger">Sorry ! There are no data to display .</div>   
