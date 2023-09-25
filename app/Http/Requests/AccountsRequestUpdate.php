@@ -26,7 +26,7 @@ class AccountsRequestUpdate extends FormRequest
             'account_type'=>'required',
             'is_parent'=>'required',
             'parent_account_number'=>'required_if:is_parent,0',
-            'is_archived'=>'required'
+            'active'=>'required'
 
         ];
     }
@@ -38,7 +38,7 @@ class AccountsRequestUpdate extends FormRequest
             'account_type.required'=>'Please enter account type',
             'is_parent.required'=>'Please select if account is parent or not',
             'parent_account_number.required_if'=>'Please enter parent_account_number',
-            'is_archived.required'=>'please select if account is archived or not'
+            'active.required'=>'please select if account is archived or not'
 
         ];
     }

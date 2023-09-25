@@ -104,13 +104,14 @@ FinancialAccounts
 
 <div class="col-md-6">
   <div class="form-group">
-      <label for="is_archived">ActivationCase</label>
-        <select class="form-control" name="is_archived" id="is_archived">
+      <label for="active">ActivationCase</label>
+        <select class="form-control" name="active" id="active">
                 <option value="">Select..</option>
-                <option {{old('is_archived',$data['is_archived'])==0 ? 'selected':''}} value="0">active</option>
-                <option {{old('is_archived',$data['is_archived'])==1 ? 'selected':''}} value="1">inactive</option>
+                <option {{old('active',$data['active'])==1 ? 'selected':''}} value="1">active</option>
+
+                <option {{old('active',$data['active'])==0 ? 'selected':''}} value="0">inactive</option>
             </select>
-             @error('is_archived')
+             @error('active')
                <span class="text-danger">{{$message}}</span>  
              @enderror
         </div>    

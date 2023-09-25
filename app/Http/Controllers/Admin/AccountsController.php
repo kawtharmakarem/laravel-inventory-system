@@ -93,8 +93,9 @@ class AccountsController extends Controller
             $data_to_insert['start_balance_status']=3;
             $data_to_insert['start_balance']=0;
         }
+        $data_to_insert['current_balance']=$data_to_insert['start_balance'];
         $data_to_insert['notes']=$request->notes;
-        $data_to_insert['is_archived']=$request->is_archived;
+        $data_to_insert['active']=$request->active;
         $data_to_insert['added_by']=auth()->user()->id;
         $data_to_insert['created_at']=date("Y-m-d H:i:s");
         $data_to_insert['date']=date("Y-m-d");
@@ -136,7 +137,7 @@ class AccountsController extends Controller
             if($data_to_update['is_parent']==0){
                 $data_to_update['parent_account_number']=$request->parent_account_number;
             }
-            $data_to_update['is_archived']=$request->is_archived;
+            $data_to_update['active']=$request->active;
             $data_to_update['updated_by']=auth()->user()->id;
             $data_to_update['updated_at']=date("Y-m-d H:i:s");
            $flag= update(new Account(),$data_to_update,array('id'=>$id,'com_code'=>$com_code));
@@ -193,6 +194,7 @@ class AccountsController extends Controller
             $search_by_text=$request->search_by_text;
             $account_type=$request->account_type;
             $is_parent=$request->is_parent;
+            $active=$request->active;
             $searchbyradio=$request->searchbyradio;
 
             if($is_parent=='all')
@@ -241,7 +243,16 @@ class AccountsController extends Controller
                $operator3='>';
                $value3=0;
             }
-            $data=Account::where($field1,$operator1,$value1)->where($field2,$operator2,$value2)->where($field3,$operator3,$value3)->orderby('id','DESC')->paginate(PAGINATION_COUNT);
+            if($active=='all'){
+             $field4="id";
+             $operator4=">";
+             $value4=0;
+            }else{
+                $field4='active';
+                $operator4='=';
+                $value4=$active;
+            }
+            $data=Account::where($field1,$operator1,$value1)->where($field2,$operator2,$value2)->where($field3,$operator3,$value3)->where($field4,$operator4,$value4)->orderby('id','DESC')->paginate(PAGINATION_COUNT);
             if(!empty($data))
             {
             foreach ($data as $info) {

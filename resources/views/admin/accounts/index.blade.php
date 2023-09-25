@@ -33,14 +33,14 @@ FinancialAccounts
     <div class="card-body">
        <div class="row">
 
-     <div class="col-md-4">
+     <div class="col-md-3">
       
       <input checked type="radio" name="searchbyradio" id="searchbyradio" value="account_number"><label for="">ByAccountNumber</label>
       <input  type="radio" name="searchbyradio" id="searchbyradio" value="name"><label for="">ByName</label>
       <input type="text"  id="search_by_text"  name="search_by_text" placeholder="account number - name" class="form-control"><br>
     </div>   
   
-<div class="col-md-4">
+<div class="col-md-3">
   <div class="form-group">
     <label for="account_type_search">ByAccountType</label>
     <select name="account_type_search" id="account_type_search" class="form-control">
@@ -55,13 +55,25 @@ FinancialAccounts
   </div>
 </div>
   
-<div class="col-md-4">
+<div class="col-md-3">
   <div class="form-group">
     <label for="is_parent_search">IsParent</label>
     <select class="form-control" name="is_parent_search" id="is_parent_search">
       <option value="all">all</option>
       <option value="1">Yes</option>
       <option value="0">No</option>
+    </select>
+
+  </div>
+</div>
+
+<div class="col-md-3">
+  <div class="form-group">
+    <label for="active_search">IsActive</label>
+    <select class="form-control" name="active_search" id="active_search">
+      <option value="all">all</option>
+      <option value="1">active</option>
+      <option value="0">inactive</option>
     </select>
 
   </div>
@@ -90,8 +102,20 @@ FinancialAccounts
                   <td>{{$info->account_types_name}}</td>
                   <td>@if($info->is_parent==1) Yes  @else No @endif</td>
                   <td>{{$info->parent_account_name}}</td>
-                  <td></td>
-                  <td>@if($info->is_archived==0) active @else inactive @endif</td>
+                  <td>
+                    @if($info->is_parent==0)
+                    @if ($info->current_balance>0)
+                    Debit ({{$info->current_balance*1}}) S.p
+                    @elseif ($info->current_balance<0)
+                    Credit ({{$info->current_balance*(-1)}}) S.p
+                    @else
+                    Balanced (0) S.P
+                    @endif
+                    @else
+                    من ميزان المراجعة
+                    @endif
+                  </td>
+                  <td>@if($info->active==1) active @else inactive @endif</td>
                   <td>
                           <a href="{{route('admin.accounts.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
                           <a href="{{route('admin.accounts.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>

@@ -18,8 +18,20 @@
                   <td>{{$info->account_types_name}}</td>
                   <td>@if($info->is_parent==1) Yes  @else No @endif</td>
                   <td>{{$info->parent_account_name}}</td>
-                  <td></td>
-                  <td>@if($info->is_archived==0) active @else inactive @endif</td>
+                  <td>
+                    @if($info->is_parent==0)
+                    @if ($info->current_balance>0)
+                    Debit ({{$info->current_balance*1}}) S.p
+                    @elseif ($info->current_balance<0)
+                    Credit ({{$info->current_balance*(-1)}}) S.p
+                    @else
+                    Balanced (0) S.P
+                    @endif
+                    @else
+                    من ميزان المراجعة
+                    @endif
+                  </td>
+                  <td>@if($info->active==1) active @else inactive @endif</td>
                   <td>
                           <a href="{{route('admin.accounts.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
                           <a href="{{route('admin.accounts.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>

@@ -28,7 +28,7 @@ class AccountsRequest extends FormRequest
             'parent_account_number'=>'required_if:is_parent,0',
             'start_balance_status'=>'required',
             'start_balance'=>'required|min:0',
-            'is_archived'=>'required'
+            'active'=>'required'
 
         ];
     }
@@ -42,7 +42,7 @@ class AccountsRequest extends FormRequest
             'parent_account_number.required_if'=>'Please enter parent_account_number',
             'start_balance_status.required'=>'Please enter balance_status',
             'start_balance.required'=>'Please enter your start balance',
-            'is_archived.required'=>'please select if account is archived or not'
+            'active.required'=>'please select if account is archived or not'
 
         ];
     }

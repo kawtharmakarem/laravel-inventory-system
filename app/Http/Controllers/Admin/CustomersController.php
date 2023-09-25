@@ -87,7 +87,7 @@ class CustomersController extends Controller
           $data_insert['start_balance'] = 0;
         }
   
-  
+        $data_insert['current_balance']=$data_insert['start_balance'];
         $data_insert['notes'] = $request->notes;
         $data_insert['active'] = $request->active;
         $data_insert['added_by'] = auth()->user()->id;
@@ -115,14 +115,14 @@ class CustomersController extends Controller
             $data_insert_account['start_balance_status'] = 3;
             $data_insert_account['start_balance'] = 0;
           }
-  
+          $data_insert_account['current_balance']=$data_insert_account['start_balance'];
           $customer_parent_account_number = get_field_value(new Admin_panel_setting(), "customer_parent_account_number", array('com_code' => $com_code));
           $data_insert_account['notes'] = $request->notes;
           $data_insert_account['parent_account_number'] = $customer_parent_account_number;
           $data_insert_account['is_parent'] = 0;
           $data_insert_account['account_number'] = $data_insert['account_number'];
           $data_insert_account['account_type'] = 3;
-          $data_insert_account['is_archived'] = $request->active;
+          $data_insert_account['active'] = $request->active;
           $data_insert_account['added_by'] = auth()->user()->id;
           $data_insert_account['created_at'] = date("Y-m-d H:i:s");
           $data_insert_account['date'] = date("Y-m-d");
