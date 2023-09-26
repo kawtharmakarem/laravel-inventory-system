@@ -53,6 +53,9 @@ Accounts
 
                   <th>Account_number</th>
                   <th>Balance</th>
+                  <th>Address</th>
+                  <th>Phones</th>
+                  <th>Notes</th>
                   <th>ActivationCase</th>
                   <th>Actions</th>
                 </thead> 
@@ -64,7 +67,7 @@ Accounts
 
                   <td>{{$info->account_number}}</td>
                   <td>
-                    @if ($info->is_parent==0)
+                    
                     @if ($info->current_balance>0)
                     Debit ({{$info->current_balance*1}})S.p
                      @elseif ($info->current_balance<0)
@@ -72,16 +75,15 @@ Accounts
                      @else
                      Balanced 
                     @endif
-                    @else
-                    من ميزان المراجعة
-                      
-                    @endif
+                  
+                    
                   </td>
+                  <td>{{$info->address}}</td>
+                  <td>{{$info->phones}}</td>
+                  <td>{{$info->notes}}</td>
                   <td>@if($info->active==1) active @else inactive @endif</td>
                   <td>
                           <a href="{{route('admin.customers.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
-                          <a href="{{route('admin.customers.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>
-                          <a href="{{route('admin.customers.show',$info->id)}}" class="btn btn-sm btn-info">show</a>
                    </td>
           
                   </tr>

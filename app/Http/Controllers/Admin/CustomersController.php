@@ -86,7 +86,7 @@ class CustomersController extends Controller
           $data_insert['start_balance_status'] = 3;
           $data_insert['start_balance'] = 0;
         }
-  
+        $data_insert['phones']=$request->phones;
         $data_insert['current_balance']=$data_insert['start_balance'];
         $data_insert['notes'] = $request->notes;
         $data_insert['active'] = $request->active;
@@ -162,6 +162,7 @@ class CustomersController extends Controller
           return redirect()->back()->with(['error'=>'This Customer name is already existed ..'])->withInput();
         }
         $data_to_update['name']=$request->name;
+        $data_to_update['phones']=$request->phones;
         $data_to_update['address']=$request->address;
         $data_to_update['notes']=$request->notes;
         $data_to_update['active']=$request->active;

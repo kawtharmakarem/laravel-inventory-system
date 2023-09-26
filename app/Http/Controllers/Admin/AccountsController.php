@@ -27,6 +27,7 @@ class AccountsController extends Controller
                     $info->updated_by_admin=Admin::where('id',$info->updated_by)->value('name');
                 }
                 $info->account_types_name=Account_types::where('id',$info->account_type)->value('name');
+                $info->relatedinternalaccounts=Account_types::where('id',$info->account_type)->value('relatedinternalaccounts');
                 if($info->is_parent==0){
                     $info->parent_account_name=Account::where('account_number',$info->parent_account_number)->value('name');
                 }else{
@@ -111,9 +112,16 @@ class AccountsController extends Controller
     public function edit($id)
     {
         $com_code=auth()->user()->com_code;
+        $data=Account::select()->where(['id'=>$id,'com_code'=>$com_code])->first();
+        if(empty($data)){
+            return redirect()->route('admin.accounts.index')->with(['error'=>'Sorry ! unable to find required data!!!!']);
+        }
+        $relatedinternalaccounts=Account_types::where('id',$data['account_type'])->value('relatedinternalaccounts');
+        if($relatedinternalaccounts==1){
+            return redirect()->route('admin.accounts.index')->with(['error'=>'Sorry ! this account have to be updated from it is own screen']);
+        }
         $account_type=Account_types::select('id','name')->where(['active'=>1])->orderby('id','ASC')->get();
         $parent_account_type=Account::select('account_number','name')->where(['is_parent'=>1,'com_code'=>$com_code])->orderby('id','ASC')->get();
-        $data=Account::select()->where(['id'=>$id,'com_code'=>$com_code])->first();
         return view('admin.accounts.edit',['data'=>$data,'account_type'=>$account_type,'parent_account_type'=>$parent_account_type]);
     }
     public function update($id,AccountsRequestUpdate $request)
@@ -125,6 +133,10 @@ class AccountsController extends Controller
             if(empty($data))
             {
                 return redirect()->route('admin.accounts.index')->with(['error'=>'Sorry ! unable to find required data .']);
+            }
+            $relatedinternalaccounts=Account_types::where('id',$data['account_type'])->value('relatedinternalaccounts');
+            if($relatedinternalaccounts==1){
+                return redirect()->route('admin.accounts.index')->where(['error'=>'Sorry ! this account have to be updated from it is own screen']);
             }
             $checkExists = Account::where(['name' => $request->name, 'com_code' => $com_code])->where('id', '!=', $id)->first();
             if($checkExists!=null)
@@ -141,16 +153,7 @@ class AccountsController extends Controller
             $data_to_update['updated_by']=auth()->user()->id;
             $data_to_update['updated_at']=date("Y-m-d H:i:s");
            $flag= update(new Account(),$data_to_update,array('id'=>$id,'com_code'=>$com_code));
-          if($flag){
-            if($data['account_type']==3){
-                //update customer table row
-                $data_to_update_customer['name']=$request->name;
-                $data_to_update_customer['updated_by']=auth()->user()->id;
-                $data_to_update_customer['updated_at']=date("Y-m-d H:i:s");
-                $flag=update(new Customer(),$data_to_update_customer,array('account_number'=>$data['account_number'],'customer_code'=>$data['other_table_FK'],'com_code'=>$com_code));
-
-            }
-          }
+         
             return redirect()->route('admin.accounts.index')->with(['success' => 'Data updated successfully.']);
 
 
@@ -191,67 +194,63 @@ class AccountsController extends Controller
     {
         if($request->ajax())
         {
-            $search_by_text=$request->search_by_text;
-            $account_type=$request->account_type;
-            $is_parent=$request->is_parent;
-            $active=$request->active;
-            $searchbyradio=$request->searchbyradio;
+            $search_by_text = $request->search_by_text;
+      $is_parent = $request->is_parent;
+      $account_type = $request->account_type;
+      $active_search = $request->active_search;
+      $searchbyradio = $request->searchbyradio;
+      if ($is_parent == 'all') {
+        $field1 = "id";
+        $operator1 = ">";
+        $value1 = 0;
+      } else {
+        $field1 = "is_parent";
+        $operator1 = "=";
+        $value1 = $is_parent;
+      }
 
-            if($is_parent=='all')
-            {
-              $field1="id";
-              $operator1=">";
-              $value1=0;
-            }else
-            {
-                $field1="is_parent";
-              $operator1="=";
-              $value1=$is_parent;
-               
-            }
+      if ($account_type == 'all') {
+        $field2 = "id";
+        $operator2 = ">";
+        $value2 = 0;
+      } else {
+        $field2 = "account_type";
+        $operator2 = "=";
+        $value2 = $account_type;
+      }
 
 
-            if($account_type=='all')
-            {
-              $field2="id";
-              $operator2=">";
-              $value2=0;
-            }else
-            {
-                $field2="account_type";
-              $operator2="=";
-              $value2=$account_type;
-               
-            }
 
-            if($search_by_text!='')
-            {
-                if($searchbyradio=='account_number')
-                {
-                    $field3='account_number';
-                    $operator3='=';
-                    $value3=$search_by_text;
-                }else
-                {
-                 $field3='name';
-                 $operator3='LIKE';
-                 $value3="%{$search_by_text}%"; 
-                }
-            }else
-            {
-               $field3='id';
-               $operator3='>';
-               $value3=0;
-            }
-            if($active=='all'){
-             $field4="id";
-             $operator4=">";
-             $value4=0;
-            }else{
-                $field4='active';
-                $operator4='=';
-                $value4=$active;
-            }
+      if ($search_by_text != '') {
+
+        if ($searchbyradio == 'account_number') {
+
+          $field3 = "account_number";
+          $operator3 = "=";
+          $value3 = $search_by_text;
+        } else {
+          $field3 = "name";
+          $operator3 = "like";
+          $value3 = "%{$search_by_text}%";
+        }
+      } else {
+        //true 
+        $field3 = "id";
+        $operator3 = ">";
+        $value3 = 0;
+      }
+
+
+
+      if ($active_search == 'all') {
+        $field4 = "id";
+        $operator4 = ">";
+        $value4 = 0;
+      } else {
+        $field4 = "active";
+        $operator4 = "=";
+        $value4 = $active_search;
+      }
             $data=Account::where($field1,$operator1,$value1)->where($field2,$operator2,$value2)->where($field3,$operator3,$value3)->where($field4,$operator4,$value4)->orderby('id','DESC')->paginate(PAGINATION_COUNT);
             if(!empty($data))
             {
@@ -262,6 +261,8 @@ class AccountsController extends Controller
                     $info->updated_by_admin=Admin::where('id',$info->updated_by)->value('name');
                 }
                 $info->account_types_name=Account_types::where('id',$info->account_type)->value('name');
+                $info->relatedinternalaccounts=Account_types::where('id',$info->account_type)->value('relatedinternalaccounts');
+
                 if($info->is_parent==0){
                     $info->parent_account_name=Account::where('account_number',$info->parent_account_number)->value('name');
                 }else{
@@ -270,9 +271,9 @@ class AccountsController extends Controller
             }
 
            }
-           return view('admin.accounts.ajax_search',['data'=>$data]);
 
            
+           return view('admin.accounts.ajax_search',['data'=>$data]);
 
         }
 

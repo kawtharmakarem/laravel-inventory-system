@@ -65,17 +65,18 @@ $(document).ready(function () {
 
   $(document).on('click','#ajax_pagination_in_search a', function (e) {
    e.preventDefault();
-   var search_by_text=$('#search_by_text').val();
-   var account_type=$('#account_type_search').val();
-    var is_parent=$('#is_parent_search').val();
-    var active=$('#active_search').val();
-   var searchbyradio=$('input[type=radio][name=searchbyradio]:checked').val(); 
- var token_search=$('#token_search').val();
+   var search_by_text=$("#search_by_text").val();
+    var account_type=$("#account_type_search").val();
+    var is_parent=$("#is_parent_search").val();
+    var active_search=$("#active_search").val();
+    var searchbyradio=$("input[type=radio][name=searchbyradio]:checked").val();
+    var token_search=$("#token_search").val();
+    
  var url=$(this).attr("href");
  $.ajax({
   type: "post",
   url: url,
-  data: {search_by_text:search_by_text,searchbyradio:searchbyradio,'_token':token_search,account_type:account_type,is_parent:is_parent,active:active},
+  data: {search_by_text:search_by_text,searchbyradio:searchbyradio,'_token':token_search,account_type:account_type,is_parent:is_parent,active_search:active_search},
   dataType: "html",
   success: function (data) {
     $('#ajax_response_searchdiv').html(data);
@@ -86,18 +87,19 @@ $(document).ready(function () {
 
   function make_search()
   {
-    var search_by_text=$('#search_by_text').val();
-    var account_type=$('#account_type_search').val();
-    var is_parent=$('#is_parent_search').val();
-    var active=$('#active_search').val();
-    var searchbyradio=$('input[type=radio][name=searchbyradio]:checked').val();
-    var ajax_search_url=$('#ajax_search_url').val();
-    var token_search=$('#token_search').val();
+    var search_by_text=$("#search_by_text").val();
+    var account_type=$("#account_type_search").val();
+    var is_parent=$("#is_parent_search").val();
+    var active_search=$("#active_search").val();
+    var searchbyradio=$("input[type=radio][name=searchbyradio]:checked").val();
+    var token_search=$("#token_search").val();
+    var ajax_search_url=$("#ajax_search_url").val();
+    
 
   $.ajax({
     type: "post",
     url: ajax_search_url,
-    data: {search_by_text:search_by_text,searchbyradio:searchbyradio,'_token':token_search,account_type:account_type,is_parent:is_parent,active:active},
+    data: {search_by_text:search_by_text,searchbyradio:searchbyradio,'_token':token_search,account_type:account_type,is_parent:is_parent,active_search:active_search},
     dataType: "html",
     cache:false,
     success: function (data) {

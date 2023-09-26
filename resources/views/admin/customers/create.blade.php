@@ -82,12 +82,22 @@ Accounts
 
       {{-- oninput="this.value=this.value.replace(/[^0-9.]/g,'')"  --}}
 
-        
+       
       <div class="col-md-6">
         <div class="form-group">
          <label for="notes">Notes</label>
                <input type="text" id="notes" name="notes" class="form-control" value="{{old('notes')}}" placeholder="Enter your notes"/>
                 @error('notes')
+                  <span class="text-danger">{{$message}}</span>  
+                @enderror
+           </div>
+       </div>
+
+       <div class="col-md-6">
+        <div class="form-group">
+         <label for="phones">Phones</label>
+               <input type="text" id="phones" name="phones" class="form-control" value="{{old('phones')}}" placeholder="Enter your phones"/>
+                @error('phones')
                   <span class="text-danger">{{$message}}</span>  
                 @enderror
            </div>

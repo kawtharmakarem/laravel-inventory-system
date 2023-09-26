@@ -33,10 +33,12 @@
                   </td>
                   <td>@if($info->active==1) active @else inactive @endif</td>
                   <td>
-                          <a href="{{route('admin.accounts.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
-                          <a href="{{route('admin.accounts.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>
-                          <a href="{{route('admin.accounts.show',$info->id)}}" class="btn btn-sm btn-info">show</a>
-                   </td>
+                    @if( $info->relatedinternalaccounts==0)
+                    <a href="{{route('admin.accounts.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
+                  @else
+                   update from it's own screen
+                  @endif
+                  </td>
           
                   </tr>
                   

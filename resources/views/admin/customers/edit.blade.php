@@ -59,6 +59,16 @@ Customers accounts
          </div>
      </div>
 
+     <div class="col-md-6">
+      <div class="form-group">
+       <label for="phones">Phones</label>
+             <input type="text" id="phones" name="phones" class="form-control" value="{{old('phones',$data['phones'])}}" placeholder="Enter your phones"/>
+              @error('phones')
+                <span class="text-danger">{{$message}}</span>  
+              @enderror
+         </div>
+     </div>
+
 
 <div class="col-md-6">
   <div class="form-group">
