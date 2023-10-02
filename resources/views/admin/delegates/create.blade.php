@@ -1,14 +1,14 @@
 
 @extends('layouts.admin')
 @section('title')
-Add new supplier account
+Add new delegate account
 @endsection
 @section('contentheader')
 Accounts
 @endsection
 @section('contentheaderlink')
-    <a href="{{route('admin.suppliers.index')}}">
-      Suppliers
+    <a href="{{route('admin.delegates.index')}}">
+      Delegates
     </a>
 @endsection
 @section('contentheaderactive')
@@ -19,20 +19,20 @@ Accounts
 <div class="card">
     <div class="card-header">
       <h3 class="card-title card_title_center">
-        Add new supplier account
+        Add new delegate account
     </h3>
     </div>
     <!-- /.card-header -->
     <div class="card-body">
-    <form action="{{route('admin.suppliers.store')}}" method="post">
+    <form action="{{route('admin.delegates.store')}}" method="post">
     <div class="row">
     @csrf
 
         
     <div class="col-md-6">
       <div class="form-group">
-       <label for="name">Supplier_Name</label>
-             <input type="text" id="name" name="name" class="form-control" value="{{old('name')}}" placeholder="Enter supplier name"/>
+       <label for="name">Delegate_Name</label>
+             <input type="text" id="name" name="name" class="form-control" value="{{old('name')}}" placeholder="Enter delegate name"/>
               @error('name')
                 <span class="text-danger">{{$message}}</span>  
               @enderror
@@ -40,29 +40,9 @@ Accounts
      </div>
 
 
-     <div class="col-md-6">
-      <div class="form-group">
-        <label for="suppliers_categories_id">Suppliers_categories</label>
-        <select name="suppliers_categories_id" id="suppliers_categories_id" class="form-control">
-          <option value="">select supplier category</option>
-          @if (@isset($suppliers_categories) && !@empty($suppliers_categories))
-          @foreach ($suppliers_categories as $info )
-            <option value="{{$info->id}}">{{$info->name}}</option>
-          @endforeach
-            
-          @endif
-        </select>
-        @error('suppliers_categories_id')
-        <span class="text-danger">{{$message}}</span>
-          
-        @enderror
-      </div>
-     </div>
+     
     
-       
-
-        
-     <div class="col-md-6">
+       <div class="col-md-6">
       <div class="form-group">
        <label for="start_balance_status">Start balance status</label>
        <select class="form-control" name="start_balance_status" id="start_balance_status">
@@ -88,12 +68,66 @@ Accounts
          </div>
      </div>
 
-        
-                    
+     <div class="col-md-6">
+      <div class="form-group">
+       <label for="percent_type">Delegate pecent type</label>
+       <select name="percent_type" id="percent_type" class="form-control">
+        <option value="">select type</option>
+        <option @if(old('percent_type')==1) selected="selected" @endif value="1">Fixed wage</option>
+       <option @if(old('percent_type')==0 && old('percent_type')!=null) selected='selected' @endif value="0"></option>
+      </select>
+      @error('percent_type')
+        <span class="text-danger">{{$message}}</span>  
+       @enderror
+         </div>
+     </div> 
+     
+     
+     <div class="col-md-6">
+      <div class="form-group">
+       <label for="percent_sales_commission_kataei">Delegate commission in sales/Popular price</label>
+             <input  id="percent_sales_commission_kataei" name="percent_sales_commission_kataei" class="form-control" oninput="this.value=this.value.replace(/[^0-9.]/g,'')" value="{{old('start_balance')}}" placeholder=""/>
+              @error('percent_sales_commission_kataei')
+                <span class="text-danger">{{$message}}</span>  
+              @enderror
+         </div>
+     </div>
+
+     <div class="col-md-6">
+      <div class="form-group">
+       <label for="percent_sales_commission_nosjomla">Delegate commission in sales/Half wholesale price</label>
+             <input  id="percent_sales_commission_nosjomla" name="percent_sales_commission_nosjomla" class="form-control" oninput="this.value=this.value.replace(/[^0-9.]/g,'')" value="{{old('start_balance')}}" placeholder=""/>
+              @error('percent_sales_commission_nosjomla')
+                <span class="text-danger">{{$message}}</span>  
+              @enderror
+         </div>
+     </div>
+
+
+     <div class="col-md-6">
+      <div class="form-group">
+       <label for="percent_sales_commission_jomla">Delegate commission in sales/Wholesale price</label>
+             <input  id="percent_sales_commission_jomla" name="percent_sales_commission_jomla" class="form-control" oninput="this.value=this.value.replace(/[^0-9.]/g,'')" value="{{old('start_balance')}}" placeholder=""/>
+              @error('percent_sales_commission_jomla')
+                <span class="text-danger">{{$message}}</span>  
+              @enderror
+         </div>
+     </div>
+            
+     <div class="col-md-6">
+      <div class="form-group">
+       <label for="percent_collect_commission">Delegate commission in sales/Wholesale price</label>
+             <input  id="percent_collect_commission" name="percent_collect_commission" class="form-control" oninput="this.value=this.value.replace(/[^0-9.]/g,'')" value="{{old('start_balance')}}" placeholder=""/>
+              @error('percent_collect_commission')
+                <span class="text-danger">{{$message}}</span>  
+              @enderror
+         </div>
+     </div>
+
      <div class="col-md-6">
       <div class="form-group">
        <label for="address">Address</label>
-             <input type="text" id="address" name="address" class="form-control" value="{{old('address')}}" placeholder="Enter supplier address"/>
+             <input type="text" id="address" name="address" class="form-control" value="{{old('address')}}" placeholder="Enter delegate address"/>
               @error('address')
                 <span class="text-danger">{{$message}}</span>  
               @enderror
@@ -142,7 +176,7 @@ Accounts
     </div>
         <div class="form-group text-center">
          <button  id="do_add_item_cardd" type="submit" class="btn btn-warning">Add</button>
-         <a href="{{route('admin.suppliers.index')}}" class="btn btn-secondary">Cancel</a>
+         <a href="{{route('admin.delegates.index')}}" class="btn btn-secondary">Cancel</a>
 
         </div>
      </div>

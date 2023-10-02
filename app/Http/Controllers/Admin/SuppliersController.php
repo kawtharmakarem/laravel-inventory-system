@@ -71,6 +71,7 @@ class SuppliersController extends Controller
   
   
         $data_insert['name'] = $request->name;
+        $data_insert['phones']=$request->phones;
         $data_insert['address'] = $request->address;
         $data_insert['suppliers_categories_id']=$request->suppliers_categories_id;
         $data_insert['start_balance_status'] = $request->start_balance_status;
@@ -90,7 +91,7 @@ class SuppliersController extends Controller
           $data_insert['start_balance_status'] = 3;
           $data_insert['start_balance'] = 0;
         }
-  
+        $data_insert['current_balance']=$data_insert['start_balance'];
   
         $data_insert['notes'] = $request->notes;
         $data_insert['active'] = $request->active;
@@ -119,7 +120,8 @@ class SuppliersController extends Controller
             $data_insert_account['start_balance_status'] = 3;
             $data_insert_account['start_balance'] = 0;
           }
-  
+          
+          $data_insert_account['current_balance']=$data_insert_account['start_balance'];
           $supplier_parent_account_number = get_field_value(new Admin_panel_setting(), "supplier_parent_account_number", array('com_code' => $com_code));
           $data_insert_account['notes'] = $request->notes;
           $data_insert_account['parent_account_number'] = $supplier_parent_account_number;
@@ -166,6 +168,7 @@ class SuppliersController extends Controller
           return redirect()->back()->with(['error'=>'This Supplier is already existed'])->withInput();
         }
         $data_to_update['name']=$request->name;
+        $data_to_update['phones']=$request->phones;
         $data_to_update['address']=$request->address;
         $data_to_update['notes']=$request->notes;
         $data_to_update['active']=$request->active;
@@ -175,6 +178,7 @@ class SuppliersController extends Controller
         if($flag)
         {
           $data_to_update_account['name']=$request->name;
+          $data_to_update_account['active']=$request->active;
           $data_to_update_account['updated_by']=auth()->user()->id;
           $data_to_update_account['updated_at']=date('Y-m-d H:i:s');
           Account::where(['account_number'=>$data['account_number'],'other_table_FK'=>$data['supplier_code'],'com_code'=>$com_code,'account_type'=>2])->update($data_to_update_account);

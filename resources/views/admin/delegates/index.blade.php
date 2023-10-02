@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 @section('title')
-Suppliers
+Delegates
 @endsection
 @section('contentheader')
 Accounts
 @endsection
 @section('contentheaderlink')
-    <a href="{{route('admin.suppliers.index')}}">
-      Suppliers        
+    <a href="{{route('admin.delegates.index')}}">
+      Delegates        
     </a>
 @endsection
 @section('contentheaderactive')
@@ -18,15 +18,15 @@ Accounts
   <div class="card">
     <div class="card-header">
       <h3 class="card-title card_title_center">
-        Suppliers Information
+        Delegates Information
     </h3>
 
 {{-- for search/start --}}
       <input type="hidden" name="token_search" id="token_search"  value="{{csrf_token()}}">
-      <input type="hidden" name="ajax_search_url" id="ajax_search_url" value="{{route('admin.suppliers.ajax_search')}}">
+      <input type="hidden" name="ajax_search_url" id="ajax_search_url" value="{{route('admin.delegates.ajax_search')}}">
 {{-- for search/end --}}
 
-      <a href="{{route('admin.suppliers.create')}}" class="btn btn-warning">Add New</a>
+      <a href="{{route('admin.delegates.create')}}" class="btn btn-warning">Add New</a>
     </div>
 
     <!-- /.card-header -->
@@ -34,11 +34,11 @@ Accounts
        <div class="row">
 
      <div class="col-md-4">
-      <input checked type="radio" name="searchbyradio" id="searchbyradio" value="supplier_code"><label for="">BySup_code</label>
+      <input checked type="radio" name="searchbyradio" id="searchbyradio" value="delegate_code"><label for="">ByDelg_code</label>
 
       <input  type="radio" name="searchbyradio" id="searchbyradio" value="account_number"><label for="">ByAccount</label>
       <input  type="radio" name="searchbyradio" id="searchbyradio" value="name"><label for="">ByName</label>
-        <input autofocus type="text"  id="search_by_text"  name="search_by_text" placeholder="account_number - supplier_code -name" class="form-control"><br>
+        <input autofocus type="text"  id="search_by_text"  name="search_by_text" placeholder="account_number - delegate_code -name" class="form-control"><br>
     </div>   
  
   
@@ -49,10 +49,11 @@ Accounts
             <table id="example2" class="table table-bordered table-hover">
                 <thead class="custom_thead">
                   <th> Name</th>
-                  <th>supplier_code</th>
-                  <th>SupplierCategory</th>
+                  <th>Delegate_code</th>
                   <th>Account_number</th>
                   <th>Balance</th>
+                  <th>Address</th>
+
                   <th>Phones</th>
                   <th>notes</th>
                   <th>ActivationCase</th>
@@ -62,11 +63,9 @@ Accounts
                   @foreach ($data as $info)
                   <tr>
                   <td>{{$info->name}}</td>
-                  <td>{{$info->supplier_code}}</td>
-                   <td>{{$info->suppliers_categories_name}}</td>
+                  <td>{{$info->delegate_code}}</td>
                   <td>{{$info->account_number}}</td>
                   <td>
-                    
                     @if ($info->current_balance>0)
                     Debit ({{$info->current_balance*1}})S.p
                      @elseif ($info->current_balance<0)
@@ -74,12 +73,15 @@ Accounts
                      @else
                      Balanced 
                     @endif 
-                  </td>  
+                  </td>
+                   
+                  
+                  <td>{{$info->address}}</td> 
                   <td>{{$info->phones}}</td> 
                   <td>{{$info->notes}}</td>               
                   <td @if($info->active==1) class="bg-secondary" @else class="bg-danger" @endif>@if($info->active==1) active @else inactive @endif</td>
                   <td>
-                          <a href="{{route('admin.suppliers.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
+                          <a href="{{route('admin.delegates.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
                    </td>
           
                   </tr>

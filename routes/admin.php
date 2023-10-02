@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Admincontroller;
 use App\Http\Controllers\Admin\CollectController;
 use App\Http\Controllers\Admin\CustomersController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DelegatesController;
 use App\Http\Controllers\Admin\ExchangeController;
 use App\Http\Controllers\Admin\Inv_itemcardController;
 use App\Http\Controllers\Admin\InvItemCategoriesController;
@@ -226,6 +227,17 @@ Route::post('/sales_invoices/ajax_search/',[SaleInvoiceController::class,'ajax_s
 
 
 /*-------------end of sales invoice------------------------ */
+/*-------------start of delegates------------------------ */
+Route::get('/delegates/index',[DelegatesController::class,'index'])->name('admin.delegates.index');
+Route::get('/delegates/create',[DelegatesController::class,'create'])->name('admin.delegates.create');
+Route::post('/delegates/store',[DelegatesController::class,'store'])->name('admin.delegates.store');
+Route::get('/delegates/edit/{id}',[DelegatesController::class,'edit'])->name('admin.delegates.edit');
+Route::post('/delegates/update/{id}',[DelegatesController::class,'update'])->name('admin.delegates.update');
+Route::get('/delegates/delete/{id}',[DelegatesController::class,'delete'])->name('admin.delegates.delete');
+Route::post('/delegates/ajax_search/',[DelegatesController::class,'ajax_search'])->name('admin.delegates.ajax_search');
+Route::get('/delegates/show/{id}',[DelegatesController::class,'show'])->name('admin.delegates.show');
+/*-------------end of delegates------------------------ */
+
 
 
 

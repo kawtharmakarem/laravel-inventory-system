@@ -69,8 +69,8 @@
               </li>
 
 
-              <li class="nav-item has-treeview {{ (request()->is('admin/accounttypes*') || request()->is('admin/accounts*') || request()->is('admin/customers*') || request()->is('admin/suppliers_categories*') || request()->is('admin/suppliers/*') || request()->is('admin/collect_transaction*') || request()->is('admin/exchange_transaction*'))? 'menu-open':''}}">
-                <a href="#" class="nav-link {{ (request()->is('admin/accounttypes*') || request()->is('admin/accounts*') || request()->is('admin/customers*') || request()->is('admin/suppliers_categories*') || request()->is('admin/suppliers/*') || request()->is('admin/collect_transaction*') || request()->is('admin/exchange_transaction*') )? 'active':''}}">
+              <li class="nav-item has-treeview {{ (request()->is('admin/accounttypes*') || request()->is('admin/accounts*') || request()->is('admin/customers*') || request()->is('admin/suppliers_categories*') || request()->is('admin/suppliers/*') || request()->is('admin/collect_transaction*') || request()->is('admin/exchange_transaction*') || request()->is('admin/delegates*'))? 'menu-open':''}}">
+                <a href="#" class="nav-link {{ (request()->is('admin/accounttypes*') || request()->is('admin/accounts*') || request()->is('admin/customers*') || request()->is('admin/suppliers_categories*') || request()->is('admin/suppliers/*') || request()->is('admin/collect_transaction*') || request()->is('admin/exchange_transaction*') || request()->is('admin/delegates*') )? 'active':''}}">
                   <i class="nav-icon fas fa-tachometer-alt"></i>
                   <p>
                     Accounting
@@ -84,7 +84,10 @@
                   <li class="nav-item"> <a href="{{route('admin.accounts.index')}}" class="nav-link {{(request()->is('admin/accounts*'))? 'active':''}}"><i class="nav-icon fas fa-th"></i> <p> Accounts</p></a> </li>
 
                   <li class="nav-item"> <a href="{{route('admin.customers.index')}}" class="nav-link {{(request()->is('admin/customers*'))? 'active':''}}"><i class="nav-icon fas fa-th"></i> <p> CustomersAccounts</p></a> </li>
- 
+                      
+                  <li class="nav-item"> <a href="{{route('admin.delegates.index')}}" class="nav-link {{(request()->is('admin/delegates*'))? 'active':''}}"><i class="nav-icon fas fa-th"></i> <p> DelegatesAccounts</p></a> </li>
+
+
                   <li class="nav-item"> <a href="{{route('admin.suppliers_categories.index')}}" class="nav-link {{(request()->is('admin/suppliers_categories*'))? 'active':''}}"><i class="nav-icon fas fa-th"></i> <p> SuppliersCategories</p></a> </li>
 
                   

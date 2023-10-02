@@ -11,6 +11,6 @@ class Supplier extends Model
     protected $table='suppliers';
     protected $fillable=[
         'supplier_code','suppliers_categories_id','name','account_number','start_balance','start_balance_status','current_balance','notes','added_by',
-        'updated_by','created_at','updated_at','active','com_code','date','city_id','address'
+        'updated_by','created_at','updated_at','active','com_code','date','phones','address'
     ];
 }

@@ -3,7 +3,7 @@
     SuppliersCategories
 @endsection
 @section('contentheader')
-Accounts
+Settings
 @endsection
 @section('contentheaderlink')
     <a href="{{route('admin.suppliers_categories.index')}}">Suppliers Categories</a>
@@ -100,7 +100,6 @@ Accounts
 
                       <td>
                           <a href="{{route('admin.suppliers_categories.edit',$info->id)}}" class="btn btn-sm btn-warning">Edit</a>
-                          <a href="{{route('admin.suppliers_categories.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>
                       </td>
           
                   </tr>
