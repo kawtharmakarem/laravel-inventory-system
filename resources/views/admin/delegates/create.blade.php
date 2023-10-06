@@ -116,7 +116,7 @@ Accounts
             
      <div class="col-md-6">
       <div class="form-group">
-       <label for="percent_collect_commission">Delegate commission in sales/Wholesale price</label>
+       <label for="percent_collect_commission">Percent collect commission</label>
              <input  id="percent_collect_commission" name="percent_collect_commission" class="form-control" oninput="this.value=this.value.replace(/[^0-9.]/g,'')" value="{{old('start_balance')}}" placeholder=""/>
               @error('percent_collect_commission')
                 <span class="text-danger">{{$message}}</span>  
