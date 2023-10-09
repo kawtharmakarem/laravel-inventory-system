@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DelegateRequestAdd;
+use App\Http\Requests\DelegateUpdateRequest;
 use App\Models\Account;
 use App\Models\Admin;
+use App\Models\Admin_panel_setting;
 use App\Models\Delegate;
 use Illuminate\Http\Request;
 
@@ -66,11 +68,119 @@ class DelegatesController extends Controller
            }elseif($data_insert['start_balance_status']==2){
             //debit
             $data_insert['start_balance']=$request->start_balance*(1);
-           }
+            if($data_insert['start_balance']<0){
+                $data_insert['start_balance']=$data_insert['start_balance']*(-1);
+            }
+           }elseif($data_insert['start_balance_status']==3){
+         //balanced
+         $data_insert['start_balance']=0;
 
+
+           }else{
+            $data_insert['start_balance_status']=3;
+            $data_insert['start_balance']=0;
+           }
+           $data_insert['percent_type']=$request->percent_type;
+           $data_insert['percent_sales_commission_kataei']=$request->percent_sales_commission_kataei;
+           $data_insert['percent_sales_commission_nosjomla']=$request->percent_sales_commission_nosjomla;
+           $data_insert['percent_sales_commission_jomla']=$request->percent_sales_commission_jomla;
+           $data_insert['percent_collect_commission']=$request->percent_collect_commission;
+           $data_insert['address']=$request->address;
+           $data_insert['phones']=$request->phones;
+           $data_insert['current_balance']=$data_insert['start_balance'];
+           $data_insert['notes']=$request->notes;
+           $data_insert['active']=$request->active;
+           $data_insert['added_by']=auth()->user()->id;
+           $data_insert['created_at']=date("Y-m-d H:i:s");
+           $data_insert['date']=date('Y-m-d');
+           $data_insert['com_code']=$com_code;
+           $flag=Delegate::create($data_insert);
+           if($flag){
+            //insert to accounts
+            $data_insert_account['name']=$request->name;
+            $data_insert_account['start_balance_status']=$request->start_balance_status;
+            if($data_insert_account['start_balance_status']==1){
+                //credit
+                $data_insert_account['start_balance']=$request->start_balance*(-1);
+            }elseif($data_insert_account['start_balance_status']==2){
+                //debit
+                $data_insert_account['start_balance']=$request->start_balance*(1);
+                if($data_insert_account['start_balance']<0){
+                    $data_insert_account['start_balance']=$data_insert_account['start_balance']*(-1);
+                }
+            }elseif($data_insert_account['start_balance_status']==3){
+                //balanced
+                $data_insert_account['start_balance']=0;
+            }else{
+                $data_insert_account['start_balance_status']=3;
+                $data_insert_account['start_balance']=0;
+            }
+            $data_insert_account['current_balance']=$data_insert_account['start_balance'];
+            $delegate_parent_account_number=get_field_value(new Admin_panel_setting(),'delegate_parent_account_number',array('com_code'=>$com_code));
+            $data_insert_account['notes']=$request->notes;
+            $data_insert_account['parent_account_number']=$delegate_parent_account_number;
+            $data_insert_account['is_parent']=0;
+            $data_insert_account['account_number']=$data_insert['account_number'];
+            $data_insert_account['account_type']=4;
+            $data_insert_account['active']=$request->active;
+            $data_insert_account['added_by']=auth()->user()->id;
+            $data_insert_account['created_at']=date('Y-m-d H:i:s');
+            $data_insert_account['date']=date('Y-m-d');
+            $data_insert_account['com_code']=$com_code;
+            $data_insert_account['other_table_FK']=$data_insert['delegate_code'];
+            $flag=Account::create($data_insert_account);
+           }
+           return redirect()->route('admin.delegates.index')->with(['success'=>'Data Added Successfully']);
 
         } catch (\Exception $ex) {
-            //throw $th;
+            return redirect()->back()->with(['error'=>'Sorry!Something went wrong'.$ex->getMessage()])->withInput();
         }
+    }
+    public function edit($id)
+    {
+        $com_code=auth()->user()->com_code;
+        $data=Delegate::select('*')->where(['id'=>$id,'com_code'=>$com_code])->first();
+        return view('admin.delegates.edit',['data'=>$data]);
+    }
+    public function update($id,DelegateUpdateRequest $request)
+    {
+        try
+        {
+            $com_code=auth()->user()->com_code;
+            $data=Delegate::select('id','account_number','delegate_code')->where(['com_code'=>$com_code,'id'=>$id])->first();
+            if(empty($data)){
+                return redirect()->route('admin.delegates.index')->with(['error'=>'Unable to fetch required data']);
+            }
+            $checkExists_name=Delegate::where('id','!=',$id)->where(['name'=>$request->name,'com_code'=>$com_code])->first();
+            if($checkExists_name!=null){
+                return redirect()->back()->with(['error'=>'Sorry ! this account is registerd before'])->withInput();
+            }
+            $data_to_update['name']=$request->name;
+            $data_to_update['phones']=$request->phones;
+            $data_to_update['address']=$request->address;
+            $data_to_update['percent_type']=$request->percent_type;
+            $data_to_update['percent_sales_commission_kataei']=$request->percent_sales_commission_kataei;
+            $data_to_update['percent_sales_commission_nosjomla']=$request->percent_sales_commission_nosjomla;
+            $data_to_update['percent_sales_commission_jomla']=$request->percent_sales_commission_jomla;
+            $data_to_update['percent_collect_commission']=$request->percent_collect_commission;
+            $data_to_update['notes']=$request->notes;
+            $data_to_update['active']=$request->active;
+            $data_to_update['updated_by']=auth()->user()->id;
+            $data_to_update['updated_at']=date("Y-m-d H:i:s");
+            $flag=Delegate::where(['id'=>$id,'com_code'=>$com_code])->update($data_to_update);
+            if($flag){
+                $data_to_update_account['name']=$request->name;
+                $data_to_update_account['updated_by']=auth()->user()->id;
+                $data_to_update_account['updated_at']=date("Y-m-d H:i:s");
+                $data_to_update_account['active']=$request->active;
+                $flag=Account::where(['com_code'=>$com_code,'account_number'=>$data['account_number'],'other_table_FK'=>$data['delegate_code'],'account_type'=>4])->update($data_to_update_account);
+            }
+            return redirect()->route('admin.delegates.index')->with(['success'=>'Data updated successfully']);
+
+
+        }catch(\Exception $ex){
+            return redirect()->back()->with(['error'=>'Sorry ! Something went wrong'.$ex->getMessage()]);
+        }
+
     }
 }

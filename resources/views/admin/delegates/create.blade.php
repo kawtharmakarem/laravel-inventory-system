@@ -74,7 +74,7 @@ Accounts
        <select name="percent_type" id="percent_type" class="form-control">
         <option value="">select type</option>
         <option @if(old('percent_type')==1) selected="selected" @endif value="1">Fixed wage</option>
-       <option @if(old('percent_type')==0 && old('percent_type')!=null) selected='selected' @endif value="0"></option>
+       <option @if(old('percent_type')==0 && old('percent_type')!=null) selected='selected' @endif value="0">Percent wage</option>
       </select>
       @error('percent_type')
         <span class="text-danger">{{$message}}</span>  

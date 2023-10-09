@@ -12,7 +12,7 @@ class Delegate extends Model
     protected $fillable=[
         'delegate_code', 'name', 'account_number', 'start_balance', 'start_balance_status',
          'current_balance', 'notes', 'added_by', 'updated_by', 'created_at', 'updated_at', 
-         'active', 'com_code', 'date', 'city_id', 'address', 'percent_type', 'percent_collect_commission',
+         'active', 'com_code', 'date', 'phones', 'address', 'percent_type', 'percent_collect_commission',
           'percent_sales_commission_jomla', 'percent_sales_commission_nosjomla', 'percent_sales_commission_kataei'
     ];
 }
