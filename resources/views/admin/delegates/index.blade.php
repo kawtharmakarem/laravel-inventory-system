@@ -23,6 +23,7 @@ Accounts
 
 {{-- for search/start --}}
       <input type="hidden" name="token_search" id="token_search"  value="{{csrf_token()}}">
+      <input type="hidden" name="ajax_search_show" id="ajax_search_show" value="{{route('admin.delegates.show')}}">
       <input type="hidden" name="ajax_search_url" id="ajax_search_url" value="{{route('admin.delegates.ajax_search')}}">
 {{-- for search/end --}}
 
@@ -82,6 +83,7 @@ Accounts
                   <td @if($info->active==1) class="bg-secondary" @else class="bg-danger" @endif>@if($info->active==1) active @else inactive @endif</td>
                   <td>
                           <a href="{{route('admin.delegates.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
+                          <button data-id={{$info->id}} class="btn btn-sm btn-secondary show_more_details">Show more</button>
                    </td>
           
                   </tr>
@@ -108,9 +110,29 @@ Accounts
 
 </div>
 
-    
+  <!-- Modal -->
+  <div class="modal fade" id="MoreDetailsModal">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content bg-warning">
+        <div class="modal-header">
+          <h4 class="modal-title text-center">Show more delegate's details</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body" id="MoreDetailsModalBody" style="background-color: white !important;color: black">   
+
+  
+          
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>  
+  <!--end  modal-->
 @endsection
 @section('script')
-<script src="{{asset('assets/admin/js/suppliers.js')}}"></script>
+<script src="{{asset('assets/admin/js/delegates.js')}}"></script>
     
 @endsection

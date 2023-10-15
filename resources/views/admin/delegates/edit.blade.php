@@ -164,6 +164,6 @@ Accounts
 @endsection
 
 @section('script')
-<script src="{{ asset('assets/admin/js/suppliers.js') }}"></script>
+<script src="{{ asset('assets/admin/js/delegates.js') }}"></script>
 
 @endsection

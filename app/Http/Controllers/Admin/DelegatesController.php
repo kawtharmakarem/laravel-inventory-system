@@ -183,4 +183,64 @@ class DelegatesController extends Controller
         }
 
     }
+    public function show(Request $request)
+    {
+        if($request->ajax())
+        {
+            $com_code=auth()->user()->com_code;
+            $id=$request->id;
+            $data=Delegate::select('*')->where(['com_code'=>$com_code,'id'=>$id])->first();
+            if(!empty($data))
+            {
+                $data['added_by_admin']=Admin::where(['com_code'=>$com_code,'id'=>$data["added_by"]])->value('name');
+                if($data['updated_by']>0 && $data['updated_by']!=null){
+                    $data['updated_by_admin']=Admin::where(['com_code'=>$com_code,'id'=>$data["updated_by"]])->value('name');
+                }
+            }
+            return view('admin.delegates.show',['data'=>$data]);
+        }
+    }
+    public function ajax_search(Request $request)
+    {
+     if($request->ajax()){
+        $com_code=auth()->user()->com_code;
+        $search_by_text=$request->search_by_text;
+        $searchbyradio=$request->searchbyradio;
+        if($search_by_text!='')
+        {
+        if($searchbyradio=='delegate_code')
+        {
+            $field1="delegate_code";
+            $operator1="=";
+            $value1=$search_by_text;
+        }elseif($searchbyradio=='account_number'){
+            $field1="account_number";
+            $operator1="=";
+            $value1=$search_by_text;
+        }else{
+            $field1="name";
+            $operator1="Like";
+            $value1="%{$search_by_text}%";
+        }
+
+        }else
+        {
+           $field1='id';
+           $operator1=">";
+           $value1=0;
+        }
+        $data=Delegate::where($field1,$operator1,$value1)->where(['com_code'=>$com_code])->orderby('id','DESC')->paginate(PAGINATION_COUNT);
+        if(!empty($data)){
+        foreach ($data as $info) {
+            $info->added_by_admin=Admin::where(['com_code'=>$com_code,'id'=>$info->added_by])->value('name');
+            if($info->updated_by>0 and $info->updated_by!=null)
+            {
+                $info->updated_by_admin=Admin::where(['com_code'=>$com_code,'id'=>$info->updated_by])->value('name');
+            }
+        }
+        }
+        return view('admin.delegates.ajax_search',['data'=>$data]);
+
+     }
+    }
 }

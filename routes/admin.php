@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-define('PAGINATION_COUNT',10);
+define('PAGINATION_COUNT',1);
 
 
 Route::group(['prefix'=>'admin','middleware'=>'auth:admin'],function(){
@@ -235,7 +235,7 @@ Route::get('/delegates/edit/{id}',[DelegatesController::class,'edit'])->name('ad
 Route::post('/delegates/update/{id}',[DelegatesController::class,'update'])->name('admin.delegates.update');
 Route::get('/delegates/delete/{id}',[DelegatesController::class,'delete'])->name('admin.delegates.delete');
 Route::post('/delegates/ajax_search/',[DelegatesController::class,'ajax_search'])->name('admin.delegates.ajax_search');
-Route::get('/delegates/show/{id}',[DelegatesController::class,'show'])->name('admin.delegates.show');
+Route::post('/delegates/show',[DelegatesController::class,'show'])->name('admin.delegates.show');
 /*-------------end of delegates------------------------ */
 
 
