@@ -25,7 +25,8 @@ Accounts
 
 {{-- for search/start --}}
       <input type="hidden" name="token_search" id="token_search"  value="{{csrf_token()}}">
-{{-- for search/end --}}
+      <input type="hidden" id="ajax_url_get_account_balance" value="{{route('admin.exchange_transaction.get_account_balance')}}">
+      {{-- for search/end --}}
 
     </div>
 
@@ -63,6 +64,9 @@ Accounts
                             
                         @enderror
                     </div>
+                </div>
+                 
+                <div class="col-md-4" id="get_account_balanceDiv" style="display: none">
                 </div>
 
 
@@ -164,6 +168,7 @@ Accounts
                   <th>Treasury</th>
                   <th>amount</th>
                   <th>Transaction</th>
+                  <th>AccountName</th>
                   <th>Description</th>
                   <th>User</th>
                   <th>Actions</th>
@@ -178,6 +183,10 @@ Accounts
                       <td>{{$info->treasury_name}}</td>
                       <td>{{$info->money*(1)*(-1)}}</td>
                       <td>{{$info->mov_type_name}}</td>
+                      <td>{{$info->account_name}}
+                        <br>
+                        ({{$info->account_type_name}})
+                    </td>
                       <td>{{$info->byan}}</td>
                       <td>
                         @php

@@ -113,4 +113,23 @@ $(document).ready(function () {
     }
     
   });
+  $(document).on('change','#account_number', function () {
+    if($(this).val()!=""){
+        var token_search=$("#token_search").val();
+        var url=$('#ajax_url_get_account_balance').val();
+        $.ajax({
+            type: "post",
+            url: url,
+            data: {'_token':token_search,account_number:$(this).val()},
+            dataType: "html",
+            success: function (data) {
+             $("#get_account_balanceDiv").html(data);
+             $('#get_account_balanceDiv').show();   
+            }
+        });
+
+
+
+    }
+  });
 });

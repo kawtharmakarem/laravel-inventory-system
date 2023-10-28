@@ -129,6 +129,23 @@ function refresh_account_balance_customer($account_number=null,$AccountModel=nul
 
  }
 }
+/*-----------------refresh_account_balance_general-------------*/
+function refresh_account_balance_general($account_number=null,$AccountModel=null,$Treasury_TransactionModel=null,$returnFlag=null)
+{
+    $com_code=auth()->user()->com_code;
+    $AccountData=$AccountModel::select('start_balance','account_type')->where(['com_code'=>$com_code,'account_number'=>$account_number])->first();
+    if($AccountData['account_type']!=2 and $AccountData['account_type']!=3 and $AccountData['account_type']!=4 and $AccountData['account_type']!=5 and $AccountData['account_type']!=8)
+    {
+        $the_net_in_treasuries_transactions=$Treasury_TransactionModel::where(['com_code'=>$com_code,'account_number'=>$account_number])->sum('money_for_account');
+        $the_final_balance=$AccountData['start_balance']+$the_net_in_treasuries_transactions;
+        $dataToUpdateAccount['current_balance']=$the_final_balance;
+        $AccountModel::where(['com_code'=>$com_code,'account_number'=>$account_number])->update($dataToUpdateAccount);
+        if($returnFlag){
+            return $the_final_balance;
+        }
+    }
+}
+
 /*-----------------get_user_shift------------------------------ */
 function get_user_shift($Admin_shift,$Treasury=null,$Treasury_Transaction=null){
     $com_code=auth()->user()->com_code;

@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-define('PAGINATION_COUNT',1);
+define('PAGINATION_COUNT',11);
 
 
 Route::group(['prefix'=>'admin','middleware'=>'auth:admin'],function(){
@@ -191,11 +191,13 @@ Route::post('/admin_shift/store',[Admin_ShiftController::class,'store'])->name('
 Route::get('/collect_transaction/index',[CollectController::class,'index'])->name('admin.collect_transaction.index');
 Route::get('/collect_transaction/create',[CollectController::class,'create'])->name('admin.collect_transaction.create');
 Route::post('/collect_transaction/store',[CollectController::class,'store'])->name('admin.collect_transaction.store');
+Route::post('/collect_transaction/get_account_balance',[CollectController::class,'get_account_balance'])->name('admin.collect_transaction.get_account_balance');
 /*-------------end of collection transaction------------------------ */
 /*-------------start of Exchange transaction------------------------ */
 Route::get('/exchange_transaction/index',[ExchangeController::class,'index'])->name('admin.exchange_transaction.index');
 Route::get('/exchange_transaction/create',[ExchangeController::class,'create'])->name('admin.exchange_transaction.create');
 Route::post('/exchange_transaction/store',[ExchangeController::class,'store'])->name('admin.exchange_transaction.store');
+Route::post('exchange_transaction/get_account_balance',[ExchangeController::class,'get_account_balance'])->name('admin.exchange_transaction.get_account_balance');
 /*-------------end of Exchange transaction------------------------ */
 
 /*-------------start of sales invoice------------------------ */

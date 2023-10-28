@@ -29,8 +29,12 @@ class CollectController extends Controller
                 $info->added_by_admin=Admin::where('id',$info->added_by)->value('name');
                 $info->treasury_name=Treasury::where('id',$info->treasuries_id)->value('name');
                $info->mov_type_name=Mov_Type::where('id',$info->mov_type)->value('name');
-                $info->account_type=Account::where(['com_code'=>$com_code,'account_number'=>$info->account_number])->value('account_type');
+                
+                if($info->is_account==1){
+                  $info->account_type=Account::where(['com_code'=>$com_code,'account_number'=>$info->account_number])->value('account_type');
                 $info->account_type_name=Account_types::where(['id'=>$info->account_type])->value('name');
+                $info->account_name=Account::where(['com_code'=>$com_code,'account_number'=>$info->account_number])->value('name');
+                }
             }
         }
         $checkExistsOpenShift=get_cols_where_row(new Admin_Shift(),array('treasuries_id','shift_code'),array('com_code'=>$com_code,'admin_id'=>auth()->user()->id,'is_finished'=>0));
@@ -40,7 +44,7 @@ class CollectController extends Controller
          $checkExistsOpenShift['treasuries_balance_now']=get_sum_where(new Treasury_Transaction(),'money',array('com_code'=>$com_code,'shift_code'=>$checkExistsOpenShift['shift_code']));
         }
         $mov_type=Mov_Type::select('id','name')->where(['active'=>1,'in_screen'=>2,'is_private_internal'=>0])->orderby('id','ASC')->get();
-        $accounts=Account::select('name','account_number','account_type')->where(['com_code'=>$com_code,'is_archived'=>0,'is_parent'=>0])->orderby('id','DESC')->get();
+        $accounts=Account::select('name','account_number','account_type')->where(['com_code'=>$com_code,'active'=>1,'is_parent'=>0])->orderby('id','DESC')->get();
         if(!empty($accounts))
         {
             foreach ($accounts as $info) {
@@ -113,6 +117,30 @@ class CollectController extends Controller
       }
       catch(\Exception $ex){
          return redirect()->back()->with(['error'=>'Sorry ,Something went wrong ..'.$ex->getMessage()])->withInput();
+      }
+    }
+    public function get_account_balance(Request $request)
+    {
+      if($request->ajax())
+      {
+        $com_code=auth()->user()->com_code;
+        $account_number=$request->account_number;
+        $AccountData=Account::select('account_type')->where(['com_code'=>$com_code,'account_number'=>$account_number])->first();
+        if(!empty($AccountData))
+        {
+          if($AccountData['account_type']==2)
+          {
+            $the_final_balance=refresh_account_balance_supplier($account_number,new Account(),new Supplier(),new Treasury_Transaction(),new SupplierWithOrder(),true);
+            return view('admin.collect_transactions.get_account_balance',['the_final_balance'=>$the_final_balance]);
+          }elseif($AccountData['account_type']==3)
+          {
+            $the_final_balance=refresh_account_balance_customer($account_number,new Account(),new Sale_Invoice(),new Treasury_Transaction(),new Customer(),true);
+            return view('admin.collect_transactions.get_account_balance',['the_final_balance'=>$the_final_balance]);
+          }else{
+            $the_final_balance=refresh_account_balance_general($account_number,new Account(),new Treasury_Transaction(),true);
+            return view('admin.collect_transactions.get_account_balance',['the_final_balance'=>$the_final_balance]);
+          }
+        }
       }
     }
 }
