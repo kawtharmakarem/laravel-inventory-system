@@ -192,12 +192,14 @@ Route::get('/collect_transaction/index',[CollectController::class,'index'])->nam
 Route::get('/collect_transaction/create',[CollectController::class,'create'])->name('admin.collect_transaction.create');
 Route::post('/collect_transaction/store',[CollectController::class,'store'])->name('admin.collect_transaction.store');
 Route::post('/collect_transaction/get_account_balance',[CollectController::class,'get_account_balance'])->name('admin.collect_transaction.get_account_balance');
+Route::post('/collect_transaction/ajax_search',[CollectController::class,'ajax_search'])->name('admin.collect_transaction.ajax_search');
 /*-------------end of collection transaction------------------------ */
 /*-------------start of Exchange transaction------------------------ */
 Route::get('/exchange_transaction/index',[ExchangeController::class,'index'])->name('admin.exchange_transaction.index');
 Route::get('/exchange_transaction/create',[ExchangeController::class,'create'])->name('admin.exchange_transaction.create');
 Route::post('/exchange_transaction/store',[ExchangeController::class,'store'])->name('admin.exchange_transaction.store');
 Route::post('exchange_transaction/get_account_balance',[ExchangeController::class,'get_account_balance'])->name('admin.exchange_transaction.get_account_balance');
+Route::post('exchange_transaction/ajax_search',[ExchangeController::class,'ajax_search'])->name('admin.exchange_transaction.ajax_search');
 /*-------------end of Exchange transaction------------------------ */
 
 /*-------------start of sales invoice------------------------ */

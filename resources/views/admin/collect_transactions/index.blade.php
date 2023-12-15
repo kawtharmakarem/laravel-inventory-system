@@ -17,8 +17,8 @@ Accounts
    View 
 @endsection
 @section('content')
-<div class="row">
-    <div class="col-12">
+{{-- <div class="row"> --}}
+    {{-- <div class="col-12"> --}}
 <div class="card">
     <div class="card-header">
       <h3 class="card-title card_title_center">Collect Transactions Informations</h3>
@@ -26,6 +26,7 @@ Accounts
 {{-- for search/start --}}
       <input type="hidden" name="token_search" id="token_search"  value="{{csrf_token()}}">
       <input type="hidden" name="ajax_url_get_account_balance" id="ajax_url_get_account_balance" value="{{route('admin.collect_transaction.get_account_balance')}}">
+      <input type="hidden" name="ajax_url_ajax_search" id="ajax_url_ajax_search" value="{{route('admin.collect_transaction.ajax_search')}}">
 {{-- for search/end --}}
 
     </div>
@@ -157,6 +158,97 @@ Accounts
         </div>
         @endif
        
+        <div class="clearfix"></div>
+        
+        <div class="row" style="padding: 15px;">
+
+            <div class="col-md-4">
+                <input checked type="radio" name="searchbyradio" id="searchbyradio" value="auto_serial">ByCode
+                <input type="radio" name="searchbyradio" id="searchbyradio" value="isal_number">ByCheque
+                <input type="radio" name="searchbyradio" id="searchbyradio" value="account_number">ByAccount
+                <input type="radio" name="searchbyradio" id="searchbyradio" value="shift_code">ByShift
+                <input type="text" style="margin-top: 6px !important;" id="search_by_text" name="search_by_text" class="form-control"><br>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">SearchByAccountNumber</label>
+                    <select name="account_number_search" id="account_number_search" class="form-control">
+                        <option value="all">All</option>
+                        @if (@isset($account_search) && !@empty($account_search))
+                           @foreach ($account_search as $info)
+                             <option data-type={{$info->account_type}} @if(old('account_number')==$info->account_number) selected="selected" @endif value="{{$info->account_number}}">{{$info->name}}({{$info->account_type_name}}){{$info->account_number}}</option>  
+                           @endforeach 
+                        @endif
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">SearchByMoveType</label>
+                    <select name="mov_type_search" id="mov_type_search" class="form-control">
+                     <option value="all">All</option>
+                     @if (@isset($mov_type) && !@empty($mov_type))
+                     @foreach ($mov_type as $info)
+                      <option @if(old('mov_type')==$info->id) selected="selected" @endif  value="{{$info->id}}">{{$info->name}}</option>   
+                     @endforeach
+                          
+                     @endif
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">SearchByTreasuries</label>
+                    <select name="treasuries_search" id="treasuries_search" class="form-control">
+                        <option value="all">All</option>
+                        @if (@isset($treasuries) && !@empty($treasuries))
+                        @foreach ($treasuries as $info)
+                        <option value="{{$info->id}}">{{$info->name}}</option>   
+                        @endforeach
+                            
+                        @endif
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">SearchByUsers</label>
+                    <select name="admins_search" id="admins_search" class="form-control">
+                        <option value="all">AllUsers</option>
+                         @if (@isset($admins) && !@empty($admins))
+                          @foreach ($admins as $info)
+                          <option value="{{$info->id}}">{{$info->name}}</option>
+                              
+                          @endforeach   
+                         @endif
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">FromTransactionDate:</label>
+                    <input type="date" name="from_date_search" id="from_date_search" class="form-control">
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">ToTransactionDate:</label>
+                    <input type="date" id="to_date_search" name="to_date_search" class="form-control">
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+
+        </div>
+
+
         <div id="ajax_response_searchdiv">
 
             @if (@isset($data) && !@empty($data) && count($data)>0)
@@ -228,8 +320,8 @@ Accounts
 
     </div>
 </div>
-    </div>
-</div>
+    {{-- </div> --}}
+{{-- </div> --}}
 
     
 @endsection

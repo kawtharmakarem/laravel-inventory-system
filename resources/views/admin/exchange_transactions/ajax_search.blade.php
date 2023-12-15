@@ -1,53 +1,67 @@
 
-@if (@isset($data) && !@empty($data))
+@if (@isset($data) && !@empty($data) && count($data)>0)
         
 @php
     $i=1;
 @endphp
 
-<table id="example2" class="table table-bordered table-hover">
+<table id="example2" class="table table-bordered table-hover">TotalExchange :({{$totalCollectInSearch*(-1)}})
     <thead class="custom_thead">
-      <th>#</th>
-      <th>Treasury_Name</th>
-      <th>Is_Main</th>
-      <th>Last_exchange_cheque(debit)</th>
-      <th>Last_collect_cheque(credit)</th>
-      <th>Status</th>
-      <th>Actions</th>
+        <th>auto_serial</th>
+        <th>Cheque number</th>
+        <th>Treasury</th>
+        <th>amount</th>
+        <th>Transaction</th>
+        <th>AccountName</th>
+        <th>Description</th>
+        <th>User</th>
+        <th>Actions</th>
 
-      </thead> 
+    </thead>
 
     <tbody>
-      @foreach ($data as $info)
-      <tr>
-          <td>{{$i}}</td>
-          <td>{{$info->name}}</td>
-          <td>@if ($info->is_master==1)
-            Main  
-          @else
-              Sub
-          @endif</td>
-          <td>{{$info->last_isal_exchange}}</td>
-          <td>{{$info->last_isal_collect}}</td>
-          <td>@if($info->active==1)
-            Active  
-          @else
-          InActive
-              
-          @endif</td>
-          <td>
-              <a href="{{route('admin.treasuries.edit',$info->id)}}" class="btn btn-sm btn-warning">Edit</button>
-              <a href="" data-id="{{$info->id}}" class="btn btn-sm btn-secondary">More</button>
-          </td>
+        @foreach ($data as $info)
+            <tr>
+                <td>{{ $info->auto_serial }}</td>
+                <td>{{ $info->isal_number }}</td>
+                <td>{{ $info->treasury_name }}
+                    <br>
+                    Shift{{$info->shift_code}}
+                </td>
+                <td>{{ $info->money * 1 * -1 }}</td>
+                <td>{{ $info->mov_type_name }}</td>
+                <td>{{ $info->account_name }}
+                    <br>
+                    ({{ $info->account_type_name }})
+                </td>
+                <td>{{ $info->byan }}</td>
+                <td>
+                    @php
+                        $dt = new DateTime($info->created_at);
+                        $date = $dt->format('Y-m-d');
+                        $time = $dt->format('h:i');
+                        $newDateTime = date('A', strtotime($time));
+                        $newDateTimeType = $newDateTime == 'AM' ? 'A.M.' : 'P.M.';
+                    @endphp
+                    {{ $date }}<br>
+                    {{ $time }}
+                    {{ $newDateTimeType }}<br>
+                    By
+                    {{ $info->added_by_admin }}
+                </td>
+                <td>
+                    <a href="{{ route('admin.treasuries.edit', $info->id) }}"
+                        class="btn btn-sm btn-warning">Print</a>
+                    <a href="{{ route('admin.treasuries.details', $info->id) }}"
+                        class="btn btn-sm btn-secondary">More</a>
+                </td>
 
-      </tr>
-      @php
-          $i++;
-      @endphp
-      @endforeach
-      </tbody>  
-    
-  </table>
+            </tr>
+        @endforeach
+    </tbody>
+
+</table>
+
 
 
  
