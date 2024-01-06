@@ -104,7 +104,7 @@ Billing Categories
 
                       <td>
                           <a href="{{route('admin.sales_material_types.edit',$info->id)}}" class="btn btn-sm btn-warning">Edit</a>
-                          <a href="{{route('admin.sales_material_types.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>
+                          {{-- <a href="{{route('admin.sales_material_types.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a> --}}
                       </td>
           
                   </tr>

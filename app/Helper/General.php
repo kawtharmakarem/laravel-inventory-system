@@ -27,6 +27,12 @@ function get_cols_where($model,$columns_names=array(),$where=array(),$order_fiel
  $data=$model::select($columns_names)->where($where)->orderby($order_field,$order_type)->get();
  return $data;
 }
+/*-----------get counter where  from table--------------------*/
+function get_count_where($model,$where=array())
+{
+ $counter=$model::where($where)->count();
+ return $counter;
+}
 /*-----------get some cols--------------------*/
 function get_cols($model,$columns_names=array(),$order_field,$order_type)
 {

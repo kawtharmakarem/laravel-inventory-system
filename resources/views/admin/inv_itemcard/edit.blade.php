@@ -291,7 +291,7 @@ Update Category
   <div class="form-group">
     <label for="logo">Category Logo</label>
     <div class="image">
-        <img src="{{asset('assets/admin/uploads').'/'.$data['photo']}}" alt="Logo" id="uplodedimg" class="custom_img">
+        <img src="{{ asset('assets/admin/uploads').'/'.$data['photo'] }}" alt="Logo" id="uploading" class="custom_img">
         <button type="button" class="btn btn-sm btn-danger" id="update_image">ChangeImage</button>
         <button type="button" class="btn btn-sm btn-danger" style="display: none" id="cancel_update_image">Cancel</button>
     </div>

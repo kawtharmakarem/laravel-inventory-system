@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvUomsRequest;
+use App\Http\Requests\InvUomUpdateRequest;
 use App\Models\Admin;
 use App\Models\Inv_Uom;
+use App\Models\SalesInvoiceDetail;
+use App\Models\SupplierWithOrder;
+use App\Models\SupplierWithOrderDetail;
 use Illuminate\Http\Request;
 
 class InvUomsController extends Controller
@@ -60,9 +64,15 @@ class InvUomsController extends Controller
     public function edit($id)
     {
         $data=Inv_Uom::select()->find($id);
-        return view('admin.inv_uoms.edit',['data'=>$data]);
+        $com_code=auth()->user()->com_code;
+        //check if uom used before
+        //check if it used in suppliers_order_details
+        $supplierWithOrderDetailCount=SupplierWithOrderDetail::where(['com_code'=>$com_code,'uom_id'=>$data['id']])->count();
+        $salesInvoiceDetailsCount=SalesInvoiceDetail::where(['com_code'=>$com_code,'uom_id'=>$data['id']])->count();
+        $total_counter_used=$supplierWithOrderDetailCount+$salesInvoiceDetailsCount;
+        return view('admin.inv_uoms.edit',['data'=>$data,'total_counter_used'=>$total_counter_used]);
     }
-    public function update($id,InvUomsRequest $request)
+    public function update($id,InvUomUpdateRequest $request)
     {
         try
         {
@@ -77,8 +87,18 @@ class InvUomsController extends Controller
           {
             return redirect()->back()->with(['error'=>'This type is already existed'])->withInput();
           }
+          if($request->has('is_master')){
+            if($request->is_master==""){
+              return redirect()->back()->with(['error'=>"Please select unit"])->withInput();
+            }
+          }
+          $supplierWithOrderDetailCount=SupplierWithOrderDetail::where(['com_code'=>$com_code,'uom_id'=>$data['id']])->count();
+          $salesInvoiceDetailsCount=SalesInvoiceDetail::where(['com_code'=>$com_code,'uom_id'=>$data['id']])->count();
+          $total_counter_used=$supplierWithOrderDetailCount+$salesInvoiceDetailsCount;
+          if($total_counter_used==0){
+            $data_to_update['is_master']=$request->is_master;
+          }
           $data_to_update['name']=$request->name;
-          $data_to_update['is_master']=$request->is_master;
           $data_to_update['active']=$request->active;
           $data_to_update['updated_at']=date('Y-m-d H:i:s');
           $data_to_update['updated_by']=auth()->user()->id;

@@ -120,7 +120,7 @@ Branchs
 
                       <td>
                           <a href="{{route('admin.stores.edit',$info->id)}}" class="btn btn-sm btn-warning">Edit</a>
-                          <a href="{{route('admin.stores.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>
+                          {{-- <a href="{{route('admin.stores.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a> --}}
                       </td>
           
                   </tr>

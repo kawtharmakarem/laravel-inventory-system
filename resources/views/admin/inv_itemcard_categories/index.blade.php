@@ -104,7 +104,7 @@ Item Categories
 
                       <td>
                           <a href="{{route('inv_itemcard_categories.edit',$info->id)}}" class="btn btn-sm btn-warning">Edit</a>
-                          <a href="{{route('inv_itemcard_categories.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>
+                          {{-- <a href="{{route('inv_itemcard_categories.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a> --}}
                       </td>
           
                   </tr>

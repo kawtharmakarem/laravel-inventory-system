@@ -71,7 +71,7 @@
           
           <td>
               <a href="{{route('admin.inv_itemcard.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
-              <a href="{{route('admin.inv_itemcard.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>
+              {{-- <a href="{{route('admin.inv_itemcard.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a> --}}
               <a href="{{route('admin.inv_itemcard.show',$info->id)}}" class="btn btn-sm btn-info">show</a>
 
             </td>

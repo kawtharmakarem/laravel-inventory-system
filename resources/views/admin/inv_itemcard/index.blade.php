@@ -102,17 +102,17 @@ Categories
   
             <table id="example2" class="table table-bordered table-hover">
                 <thead class="custom_thead">
-                  <th>#</th>
+                  <th>Code</th>
                   <th>
                     Name
                     {{-- Store_Name --}}
                 </th>
                   <th>Expenses</th>
                   <th>Category</th>
-                  <th>
+                  {{-- <th>
                     Basic
                     Category
-                  </th>
+                  </th> --}}
                   <th>
                     Period/
                     basic_unit
@@ -130,7 +130,7 @@ Categories
                 <tbody>
                   @foreach ($data as $info)
                   <tr>
-                      <td>{{$i}}</td>
+                      <td>{{$info->item_code}}</td>
 
                       <td>{{$info->name}}</td><!--name:arabic course-->
                       
@@ -148,7 +148,7 @@ Categories
                      
                     <td>{{$info->inv_itemcard_categories_name}}</td><!--course type :languages-->
 
-                    <td>{{$info->parent_item_name}}</td><!--i will delete later-->
+                    {{-- <td>{{$info->parent_item_name}}</td> --}}
 
 
                     <td>{{$info->uom_name}}</td>
@@ -167,7 +167,7 @@ Categories
                       
                       <td>
                           <a href="{{route('admin.inv_itemcard.edit',$info->id)}}" class="btn btn-sm btn-warning" style="margin-bottom: 1px">Edit</a>
-                          <a href="{{route('admin.inv_itemcard.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a>
+                          {{-- <a href="{{route('admin.inv_itemcard.delete',$info->id)}}" class="btn btn-sm btn-danger are_you_sure">Delete</a> --}}
                           <a href="{{route('admin.inv_itemcard.show',$info->id)}}" class="btn btn-sm btn-info">show</a>
 
                         </td>

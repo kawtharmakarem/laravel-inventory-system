@@ -7,6 +7,8 @@ use App\Http\Requests\Inv_itemcardRequest;
 use App\Models\Admin;
 use App\Models\Inv_Itemcard;
 use App\Models\Inv_Itemcard_Categories;
+use App\Models\Inv_Itemcard_Movement_Category;
+use App\Models\Inv_Itemcard_Movement_Type;
 use App\Models\Inv_Uom;
 use App\Models\Store;
 use Illuminate\Http\Request;
@@ -23,7 +25,7 @@ class Inv_itemcardController extends Controller
             foreach ($data as $info) {
                 $info->added_by_admin=get_field_value(new Admin(),'name',array('id'=>$info->added_by));
                 $info->inv_itemcard_categories_name=get_field_value(new Inv_Itemcard_Categories(),'name',array('id'=>$info->inv_itemcard_categories_id));
-                $info->parent_item_name=get_field_value(new Inv_Itemcard(),'name',array('id'=>$info->parent_inv_itemcard_id));
+                // $info->parent_item_name=get_field_value(new Inv_Itemcard(),'name',array('id'=>$info->parent_inv_itemcard_id));
                 $info->uom_name=get_field_value(new Inv_Uom(),'name',array('id'=>$info->uom_id));
                 $info->retail_uom_name=get_field_value(new Inv_Uom(),'name',array('id'=>$info->retail_uom_id));
                 if($info->updated_by>0 and $info->updated_by!=null)
@@ -185,17 +187,18 @@ class Inv_itemcardController extends Controller
         
            }
         
-            if($request->has('photo')){
-                $request->validate([
-                    'photo'=>'required|mimes:png,jpg,jpeg|max:2000',
-                ]);
-                $oldphotoPath=$data['photo'];
-                $the_file_path=uploadImage('assets/admin/uploads',$request->photo);
-                if(file_exists('assets/admin/uploads/'.$oldphotoPath)){
-                    unlink('assets/admin/uploads/'.$oldphotoPath);
-                }
-                $data_to_updata['photo']=$the_file_path;
+           if ($request->has('photo')) {
+            $request->validate([
+                'photo' => 'required|mimes:png,jpg,jpeg|max:2000',
+            ]);
+            $oldphotoPath = $data['photo'];
+            $the_file_path = uploadImage('assets/admin/uploads', $request->photo);
+            if (file_exists('assets/admin/uploads/' . $oldphotoPath) and !empty($oldphotoPath)) {
+                unlink('assets/admin/uploads/' . $oldphotoPath);
             }
+
+            $data_to_update['photo'] = $the_file_path;
+        }
             $data_to_update['has_fixed_price']=$request->has_fixed_price;
             $data_to_update['active']=$request->active;
            $data_to_update['updated_by'] = auth()->user()->id;
@@ -251,10 +254,10 @@ class Inv_itemcardController extends Controller
        if($data['updated_by']>0 and $data['updated_by']!=null){
         $data['updated_by_admin']=get_field_value(new Admin(),'name',array('id'=>$data['updated_by']));
        }
-       //$inv_itemcard_movements_categories=
-       //$inv_itemcard_movements_types=
+       $inv_itemcard_movements_categories=Inv_Itemcard_Movement_Category::select()->orderby('id','ASC')->get();
+       $inv_itemcard_movements_types=Inv_Itemcard_Movement_Type::select()->orderby('id','ASC')->get();
        $stores=get_cols_where(new Store(),array('id','name'),array('com_code'=>$com_code),'id','ASC');
-       return view('admin.inv_itemcard.show',['data'=>$data,'stors'=>$stores]);
+       return view('admin.inv_itemcard.show',['data'=>$data,'stors'=>$stores,'inv_itemcard_movements_categories'=>$inv_itemcard_movements_categories,'inv_itemcard_movements_types'=>$inv_itemcard_movements_types]);
     }
 
     public function ajax_search(Request $request)

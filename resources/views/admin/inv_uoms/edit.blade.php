@@ -37,10 +37,10 @@
 
             <div class="form-group">
                 <label for="is_master">Level</label>
-                <select class="form-control" name="is_master" id="is_master">
+                <select @if($total_counter_used>0) disabled='disabled'  @endif  class="form-control" name="is_master" id="is_master">
                     <option value="">Select..</option>
-                    <option {{old('is_master',$data['is_master'])==1 ? 'selected':''}} value="1">basic_unit</option>
-                    <option {{old('is_master',$data['is_master'])==0 ? 'selected':''}} value="0">fragment_unit</option>
+                    <option @if(old('is_master')==1) selected='selected' @endif value="1">basic_unit</option>
+                    <option @if(old('is_master')==0) selected='selected' @endif value="0">fragment_unit</option>
                 </select>
                  @error('is_master')
                    <span class="text-danger">{{$message}}</span>  
